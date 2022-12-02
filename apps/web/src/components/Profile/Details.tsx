@@ -1,13 +1,13 @@
+/* eslint-disable simple-import-sort/imports */
 import Message from '@components/Profile/Message';
 import Follow from '@components/Shared/Follow';
 import Markup from '@components/Shared/Markup';
 import Slug from '@components/Shared/Slug';
 import SuperFollow from '@components/Shared/SuperFollow';
 import Unfollow from '@components/Shared/Unfollow';
-import { Button } from '@components/UI/Button';
 import { Modal } from '@components/UI/Modal';
 import { Tooltip } from '@components/UI/Tooltip';
-import { CogIcon, HashtagIcon, LocationMarkerIcon, UsersIcon } from '@heroicons/react/outline';
+import { HashtagIcon, LocationMarkerIcon, UsersIcon } from '@heroicons/react/outline';
 import { BadgeCheckIcon } from '@heroicons/react/solid';
 import buildConversationId from '@lib/buildConversationId';
 import { buildConversationKey } from '@lib/conversationKey';
@@ -17,18 +17,16 @@ import getAvatar from '@lib/getAvatar';
 import isVerified from '@lib/isVerified';
 import { STATIC_IMAGES_URL } from 'data/constants';
 import type { Profile } from 'lens';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
 import type { FC, ReactElement } from 'react';
 import { useState } from 'react';
 import { useAppStore } from 'src/store/app';
 import { useMessageStore } from 'src/store/message';
-
-import Badges from './Badges';
 import Followerings from './Followerings';
 import MutualFollowers from './MutualFollowers';
 import MutualFollowersList from './MutualFollowers/List';
+import ProfileSidebar from './ProfileSidebar';
 
 interface Props {
   profile: Profile;
@@ -62,50 +60,55 @@ const Details: FC<Props> = ({ profile }) => {
   const followType = profile?.followModule?.__typename;
 
   return (
-    <div className="px-5 mb-4 space-y-5 sm:px-0">
-      <div className="relative -mt-24 w-32 h-32 sm:-mt-32 sm:w-52 sm:h-52">
+    <div className="px-5 mb-4 space-y-5 sm:px-0 flex flex-col">
+      <div className="w-24 h-24 sm:w-52 sm:h-52 flex flex-row space-x-5 items-center">
         <img
           src={getAvatar(profile)}
-          className="w-32 h-32 bg-gray-200 rounded-xl ring-8 ring-gray-50 sm:w-52 sm:h-52 dark:bg-gray-700 dark:ring-black"
+          className="w-24 h-24 bg-gray-200 rounded-full ring-gray-50 sm:w-32 sm:h-32 dark:bg-gray-700 dark:ring-black"
           height={128}
           width={128}
           alt={profile?.handle}
         />
-      </div>
-      <div className="py-2 space-y-1">
-        <div className="flex gap-1.5 items-center text-2xl font-bold">
-          <div className="truncate">{profile?.name ?? profile?.handle}</div>
-          {isVerified(profile?.id) && (
-            <Tooltip content="Verified">
-              <BadgeCheckIcon className="w-6 h-6 text-brand" />
-            </Tooltip>
-          )}
+        <div className="flex flex-col">
+          <div className="py-2 flex flex-col space-y-0">
+            <div className="flex gap-1 items-center text-2xl font-bold">
+              <div className="truncate">{profile?.name ?? profile?.handle}</div>
+              {isVerified(profile?.id) && (
+                <Tooltip content="Verified">
+                  <BadgeCheckIcon className="w-6 h-6 text-brand" />
+                </Tooltip>
+              )}
+            </div>
+            <div className="flex items-center space-x-3">
+              {profile?.name ? (
+                <Slug className="text-sm sm:text-base" slug={profile?.handle} prefix="@" />
+              ) : (
+                <Slug className="text-sm sm:text-base" slug={formatAddress(profile?.ownedBy)} />
+              )}
+              {currentProfile && currentProfile?.id !== profile?.id && profile?.isFollowing && (
+                <div className="py-0.5 px-2 text-xs bg-gray-200 rounded-full dark:bg-gray-700">
+                  Follows you
+                </div>
+              )}
+            </div>
+          </div>
+          <Followerings profile={profile} />
         </div>
-        <div className="flex items-center space-x-3">
-          {profile?.name ? (
-            <Slug className="text-sm sm:text-base" slug={profile?.handle} prefix="@" />
-          ) : (
-            <Slug className="text-sm sm:text-base" slug={formatAddress(profile?.ownedBy)} />
-          )}
-          {currentProfile && currentProfile?.id !== profile?.id && profile?.isFollowing && (
-            <div className="py-0.5 px-2 text-xs bg-gray-200 rounded-full dark:bg-gray-700">Follows you</div>
-          )}
-        </div>
       </div>
+
       {profile?.bio && (
         <div className="mr-0 sm:mr-10 leading-md linkify text-md">
           <Markup>{profile?.bio}</Markup>
         </div>
       )}
+
       <div className="space-y-5">
-        <Followerings profile={profile} />
         <div>
           {currentProfile?.id === profile?.id ? (
-            <Link href="/settings">
-              <Button variant="secondary" icon={<CogIcon className="w-5 h-5" />} outline>
-                Edit Profile
-              </Button>
-            </Link>
+            <>
+              <div className="w-full divider mb-4" />
+              <ProfileSidebar className="hidden md:block" />
+            </>
           ) : followType !== 'RevertFollowModuleSettings' ? (
             following ? (
               <div className="flex space-x-2">
@@ -227,7 +230,6 @@ const Details: FC<Props> = ({ profile }) => {
           )}
         </div>
       </div>
-      <Badges profile={profile} />
     </div>
   );
 };

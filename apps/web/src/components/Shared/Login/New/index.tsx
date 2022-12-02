@@ -1,4 +1,5 @@
 import ChooseFile from '@components/Shared/ChooseFile';
+import Logo from '@components/Shared/Logo';
 import { Button } from '@components/UI/Button';
 import { ErrorMessage } from '@components/UI/ErrorMessage';
 import { Form, useZodForm } from '@components/UI/Form';
@@ -82,7 +83,8 @@ const NewProfile: FC<Props> = ({ isModal = false }) => {
       )}
       {isModal && (
         <div className="mb-2 space-y-4">
-          <img className="w-10 h-10" height={40} width={200} src="/logo.png" alt="Logo" />
+          {/* <img className="w-10 h-10" height={40} width={200} src="/logo.png" alt="Logo" /> */}
+          <Logo />
           <div className="text-xl font-bold">Sign up to {APP_NAME}</div>
         </div>
       )}

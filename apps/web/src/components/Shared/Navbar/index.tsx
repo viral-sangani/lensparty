@@ -2,17 +2,16 @@ import NotificationIcon from '@components/Notification/NotificationIcon';
 import Sidebar from '@components/Sidebar/Sidebar';
 import { Disclosure } from '@headlessui/react';
 import { MenuIcon, XIcon } from '@heroicons/react/outline';
-import hasPrideLogo from '@lib/hasPrideLogo';
-import clsx from 'clsx';
 import type { Profile } from 'lens';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { FC } from 'react';
 import { useAppStore } from 'src/store/app';
 
+import Logo from '../Logo';
+import LogoutButton from './LogoutButton';
 import MenuItems from './MenuItems';
 import Search from './Search';
-import ThemeToggle from './ThemeToggle';
 
 const Navbar: FC = () => {
   const currentProfile = useAppStore((state) => state.currentProfile);
@@ -20,31 +19,6 @@ const Navbar: FC = () => {
 
   const onProfileSelected = (profile: Profile) => {
     router.push(`/u/${profile?.handle}`);
-  };
-
-  interface NavItemProps {
-    url: string;
-    name: string;
-    current: boolean;
-  }
-
-  const NavItem = ({ url, name, current }: NavItemProps) => {
-    return (
-      <Link href={url} aria-current={current ? 'page' : undefined}>
-        <Disclosure.Button
-          className={clsx(
-            'w-full text-left px-2 md:px-3 py-1 rounded-md font-bold cursor-pointer text-sm tracking-wide',
-            {
-              'text-black dark:text-white bg-gray-200 dark:bg-gray-800': current,
-              'text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-800':
-                !current
-            }
-          )}
-        >
-          {name}
-        </Disclosure.Button>
-      </Link>
-    );
   };
 
   return (
@@ -66,12 +40,7 @@ const Navbar: FC = () => {
                   )}
                 </Disclosure.Button>
                 <Link href="/">
-                  <img
-                    height={50}
-                    width={100}
-                    src={currentProfile && hasPrideLogo(currentProfile) ? '/pride.svg' : '/logo.png'}
-                    alt="Logo"
-                  />
+                  <Logo />
                 </Link>
               </div>
               <div className="hidden sm:block sm:ml-6">
@@ -83,8 +52,9 @@ const Navbar: FC = () => {
               </div>
               <div className="flex gap-4 items-center">
                 {currentProfile ? <NotificationIcon /> : null}
-                <ThemeToggle />
+                {/* <ThemeToggle /> */}
                 <MenuItems />
+                <LogoutButton />
               </div>
             </div>
           </div>

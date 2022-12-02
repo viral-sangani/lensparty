@@ -65,7 +65,8 @@ const SinglePublication: FC<Props> = ({
         </span>
       </div>
       <div
-        className="ml-[53px]"
+        className=""
+        // className="ml-[53px]"
         onClick={() => {
           push(`/posts/${rootPublication?.id}`);
         }}

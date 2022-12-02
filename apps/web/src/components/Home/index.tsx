@@ -14,9 +14,6 @@ import type { NextPage } from 'next';
 import { useAppStore } from 'src/store/app';
 
 import EnableDispatcher from './EnableDispatcher';
-import EnableMessages from './EnableMessages';
-import SetDefaultProfile from './SetDefaultProfile';
-import SetProfile from './SetProfile';
 import Timeline from './Timeline';
 
 const Home: NextPage = () => {
@@ -43,19 +40,7 @@ const Home: NextPage = () => {
                 )}
               </GridItemEight>
               <GridItemFour>
-                {currentProfile ? (
-                  <>
-                    <EnableDispatcher />
-                    <EnableMessages />
-                  </>
-                ) : null}
-
-                {currentProfile ? (
-                  <>
-                    <SetDefaultProfile />
-                    <SetProfile />
-                  </>
-                ) : null}
+                {currentProfile ? <EnableDispatcher /> : null}
                 <Footer />
               </GridItemFour>
             </GridLayout>

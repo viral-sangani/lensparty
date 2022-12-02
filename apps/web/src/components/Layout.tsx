@@ -1,10 +1,11 @@
+/* eslint-disable simple-import-sort/imports */
 import getIsAuthTokensAvailable from '@lib/getIsAuthTokensAvailable';
 import getToastOptions from '@lib/getToastOptions';
 import resetAuthData from '@lib/resetAuthData';
 import type { Profile } from 'lens';
 import { ReferenceModules, useUserProfilesQuery } from 'lens';
-import Head from 'next/head';
 import { useTheme } from 'next-themes';
+import Head from 'next/head';
 import type { FC, ReactNode } from 'react';
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
@@ -103,11 +104,11 @@ const Layout: FC<Props> = ({ children }) => {
   return (
     <>
       <Head>
-        <meta name="theme-color" content={resolvedTheme === 'dark' ? '#1b1b1d' : '#ffffff'} />
+        <meta name="theme-color" content={resolvedTheme === 'dark' ? '#18181B' : '#ffffff'} />
       </Head>
       <Toaster position="bottom-right" toastOptions={getToastOptions(resolvedTheme)} />
       <GlobalModals />
-      <div className="flex flex-col min-h-screen">
+      <div className="dark:bg-gray-900  bg-white flex flex-col min-h-screen">
         <Navbar />
         {children}
       </div>

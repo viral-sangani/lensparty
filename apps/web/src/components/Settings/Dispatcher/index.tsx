@@ -17,7 +17,7 @@ const DispatcherSettings: FC = () => {
   }
 
   return (
-    <GridLayout>
+    <GridLayout className="max-w-7xl mx-auto mt-8 w-full">
       <MetaTags title={`Dispatcher • ${APP_NAME}`} />
       <GridItemFour>
         <Sidebar />

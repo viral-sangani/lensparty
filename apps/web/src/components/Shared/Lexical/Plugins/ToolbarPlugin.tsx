@@ -41,6 +41,15 @@ const ToolbarPlugin: FC = () => {
     <div className="flex items-center justify-between border-b-2 border-gray-200 dark:border-gray-600 px-5 py-2">
       <div className="w-full flex toolbar-icons space-x-1">
         <button
+          className={isCode ? 'bg-brand-100' : ''}
+          title="Code"
+          onClick={() => {
+            activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
+          }}
+        >
+          <i className="toolbar-icon code" />
+        </button>
+        <button
           className={isBold ? 'bg-brand-100' : ''}
           title="Bold"
           onClick={() => {
@@ -58,15 +67,6 @@ const ToolbarPlugin: FC = () => {
         >
           <i className="toolbar-icon italic" />
         </button>
-        {/* <button
-          className={isCode ? 'bg-brand-100' : ''}
-          title="Code"
-          onClick={() => {
-            activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
-          }}
-        >
-          <i className="toolbar-icon code" />
-        </button> */}
       </div>
       {/* <Beta /> */}
     </div>

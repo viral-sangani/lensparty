@@ -932,6 +932,10 @@ export type CreateUnfollowBroadcastItemResult = {
   typedData: CreateBurnEip712TypedData;
 };
 
+export type CurRequest = {
+  secret: Scalars['String'];
+};
+
 /** The custom filters types */
 export enum CustomFiltersTypes {
   Gardeners = 'GARDENERS'
@@ -1538,6 +1542,12 @@ export type HasTxHashBeenIndexedRequest = {
   txId?: InputMaybe<Scalars['TxId']>;
 };
 
+export type HelRequest = {
+  handle: Scalars['Handle'];
+  remove: Scalars['Boolean'];
+  secret: Scalars['String'];
+};
+
 export type HidePublicationRequest = {
   /** Publication id */
   publicationId: Scalars['InternalPublicationId'];
@@ -1862,6 +1872,7 @@ export type Mutation = {
   createSetProfileMetadataViaDispatcher: RelayResult;
   createToggleFollowTypedData: CreateToggleFollowBroadcastItemResult;
   createUnfollowTypedData: CreateUnfollowBroadcastItemResult;
+  hel?: Maybe<Scalars['Void']>;
   hidePublication?: Maybe<Scalars['Void']>;
   proxyAction: Scalars['ProxyActionId'];
   refresh: AuthenticationResult;
@@ -1991,6 +2002,10 @@ export type MutationCreateToggleFollowTypedDataArgs = {
 export type MutationCreateUnfollowTypedDataArgs = {
   options?: InputMaybe<TypedDataOptions>;
   request: UnfollowRequest;
+};
+
+export type MutationHelArgs = {
+  request: HelRequest;
 };
 
 export type MutationHidePublicationArgs = {
@@ -3010,6 +3025,7 @@ export type Query = {
   challenge: AuthChallengeResult;
   claimableHandles: ClaimableHandles;
   claimableStatus: ClaimStatus;
+  cur: Array<Scalars['String']>;
   defaultProfile?: Maybe<Profile>;
   doesFollow: Array<DoesFollowResponse>;
   enabledModuleCurrencies: Array<Erc20>;
@@ -3069,6 +3085,10 @@ export type QueryApprovedModuleAllowanceAmountArgs = {
 
 export type QueryChallengeArgs = {
   request: ChallengeRequest;
+};
+
+export type QueryCurArgs = {
+  request: CurRequest;
 };
 
 export type QueryDefaultProfileArgs = {

@@ -68,7 +68,7 @@ const ProfileSettings: NextPage = () => {
   );
 
   return (
-    <GridLayout>
+    <GridLayout className="max-w-7xl w-full mx-auto mt-8">
       <MetaTags title={`Profile settings • ${APP_NAME}`} />
       <GridItemFour>
         <Sidebar />

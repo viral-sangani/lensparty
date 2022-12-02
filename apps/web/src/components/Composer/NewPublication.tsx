@@ -54,7 +54,7 @@ import { useContractWrite, useSignTypedData } from 'wagmi';
 
 import Editor from './Editor';
 
-const Attachment = dynamic(() => import('@components/Composer/Actions/Attachment'), {
+const Attachment = dynamic(() => import('@components/Composer/Actions/AttachmentTemp'), {
   loading: () => <div className="mb-1 w-5 h-5 rounded-lg shimmer" />
 });
 const Giphy = dynamic(() => import('@components/Composer/Actions/Giphy'), {

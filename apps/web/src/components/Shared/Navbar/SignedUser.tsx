@@ -3,30 +3,22 @@ import { Menu, Transition } from '@headlessui/react';
 import {
   CheckCircleIcon,
   CogIcon,
-  EmojiHappyIcon,
   LogoutIcon,
-  MoonIcon,
   ShieldCheckIcon,
-  SunIcon,
   SwitchHorizontalIcon,
   UserIcon
 } from '@heroicons/react/outline';
-import getAttribute from '@lib/getAttribute';
 import getAvatar from '@lib/getAvatar';
 import isGardener from '@lib/isGardener';
 import resetAuthData from '@lib/resetAuthData';
 import clsx from 'clsx';
-import { APP_VERSION } from 'data/constants';
 import type { Profile } from 'lens';
 import { useRouter } from 'next/router';
-import { useTheme } from 'next-themes';
 import type { FC } from 'react';
 import { Fragment } from 'react';
 import { useAppPersistStore, useAppStore } from 'src/store/app';
-import { useGlobalModalStateStore } from 'src/store/modals';
 import { useDisconnect } from 'wagmi';
 
-import Slug from '../Slug';
 import { NextLink } from './MenuItems';
 
 const SignedUser: FC = () => {
@@ -35,14 +27,8 @@ const SignedUser: FC = () => {
   const currentProfile = useAppStore((state) => state.currentProfile);
   const setCurrentProfile = useAppStore((state) => state.setCurrentProfile);
   const setProfileId = useAppPersistStore((state) => state.setProfileId);
-  const setShowStatusModal = useGlobalModalStateStore((state) => state.setShowStatusModal);
-  const { theme, setTheme } = useTheme();
   const { disconnect } = useDisconnect();
   const disconnectXmtp = useDisconnectXmtp();
-
-  const statusEmoji = getAttribute(currentProfile?.attributes, 'statusEmoji');
-  const statusMessage = getAttribute(currentProfile?.attributes, 'statusMessage');
-  const hasStatus = statusEmoji && statusMessage;
 
   const logout = () => {
     disconnectXmtp();
@@ -77,40 +63,6 @@ const SignedUser: FC = () => {
               static
               className="absolute right-0 py-1 mt-2 w-48 bg-white rounded-xl border shadow-sm dark:bg-gray-900 focus:outline-none dark:border-gray-700/80"
             >
-              <Menu.Item
-                as={NextLink}
-                href={`/u/${currentProfile?.handle}`}
-                className={({ active }: { active: boolean }) =>
-                  clsx({ 'dropdown-active': active }, 'menu-item')
-                }
-              >
-                <div>Logged in as</div>
-                <div className="truncate">
-                  <Slug className="font-bold" slug={currentProfile?.handle} prefix="@" />
-                </div>
-              </Menu.Item>
-              <div className="divider" />
-              <Menu.Item
-                as="a"
-                onClick={() => setShowStatusModal(true)}
-                className={({ active }: { active: boolean }) =>
-                  clsx({ 'dropdown-active': active }, 'menu-item border dark:border-gray-700/80')
-                }
-              >
-                <div className="flex items-center space-x-2">
-                  {hasStatus ? (
-                    <>
-                      <span>{statusEmoji}</span>
-                      <span className="truncate">{statusMessage}</span>
-                    </>
-                  ) : (
-                    <>
-                      <EmojiHappyIcon className="w-4 h-4" />
-                      <span>Set status</span>
-                    </>
-                  )}
-                </div>
-              </Menu.Item>
               <div className="divider" />
               <Menu.Item
                 as={NextLink}
@@ -196,43 +148,6 @@ const SignedUser: FC = () => {
                         </button>
                       </div>
                     ))}
-                  </div>
-                </>
-              )}
-              <div className="divider" />
-              <Menu.Item
-                as="a"
-                onClick={() => {
-                  setTheme(theme === 'light' ? 'dark' : 'light');
-                }}
-                className={({ active }) => clsx({ 'dropdown-active': active }, 'menu-item')}
-              >
-                <div className="flex items-center space-x-1.5">
-                  {theme === 'light' ? (
-                    <>
-                      <MoonIcon className="w-4 h-4" />
-                      <div>Dark mode</div>
-                    </>
-                  ) : (
-                    <>
-                      <SunIcon className="w-4 h-4" />
-                      <div>Light mode</div>
-                    </>
-                  )}
-                </div>
-              </Menu.Item>
-              {currentProfile && (
-                <>
-                  <div className="divider" />
-                  <div className="py-3 px-6 text-xs">
-                    <a
-                      href={`https://github.com/lensterxyz/lenster/releases/tag/v${APP_VERSION}`}
-                      className="font-mono"
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      v{APP_VERSION}
-                    </a>
                   </div>
                 </>
               )}

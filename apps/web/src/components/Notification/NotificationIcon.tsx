@@ -1,4 +1,4 @@
-import { LightningBoltIcon } from '@heroicons/react/outline';
+import { BellIcon } from '@heroicons/react/outline';
 import { CustomFiltersTypes, useNotificationCountQuery } from 'lens';
 import Link from 'next/link';
 import type { FC } from 'react';
@@ -33,7 +33,7 @@ const NotificationIcon: FC = () => {
         setShowBadge(false);
       }}
     >
-      <LightningBoltIcon className="w-5 h-5 sm:w-6 sm:h-6 dark:text-gray-200 text-black" />
+      <BellIcon className="w-5 h-5 sm:w-6 sm:h-6 dark:text-gray-200 text-black" />
       {showBadge && <span className="w-2 h-2 bg-red-500 rounded-full" />}
     </Link>
   );

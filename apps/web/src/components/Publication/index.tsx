@@ -1,5 +1,4 @@
 import Feed from '@components/Comment/Feed';
-import HeaderTile from '@components/Publication/HeaderTile';
 import Footer from '@components/Shared/Footer';
 import Sidebar from '@components/Sidebar/Sidebar';
 import { Card } from '@components/UI/Card';
@@ -76,17 +75,6 @@ const ViewPublication: NextPage = () => {
               <Feed publication={publication} />
             </GridItemEight>
             <GridItemFour className="space-y-5">
-              <Card as="aside" className="p-5">
-                <HeaderTile
-                  profile={
-                    publication.__typename === 'Mirror'
-                      ? publication?.mirrorOf?.profile
-                      : publication?.profile
-                  }
-                  showBio
-                  isSmall
-                />
-              </Card>
               <RelevantPeople publication={publication} />
               <OnchainMeta publication={publication} />
               <Footer />

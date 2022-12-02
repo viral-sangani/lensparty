@@ -1,6 +1,5 @@
 import SinglePublication from '@components/Publication/SinglePublication';
 import PublicationsShimmer from '@components/Shared/Shimmer/PublicationsShimmer';
-import { Card } from '@components/UI/Card';
 import { EmptyState } from '@components/UI/EmptyState';
 import { ErrorMessage } from '@components/UI/ErrorMessage';
 import InfiniteLoader from '@components/UI/InfiniteLoader';
@@ -107,15 +106,13 @@ const Feed: FC<Props> = ({ profile, type }) => {
       next={loadMore}
       loader={<InfiniteLoader />}
     >
-      <Card className="divide-y-[1px] dark:divide-gray-700/80">
-        {publications?.map((publication, index: number) => (
-          <SinglePublication
-            key={`${publication.id}_${index}`}
-            publication={publication as LensPublication}
-            showThread={type !== 'MEDIA'}
-          />
-        ))}
-      </Card>
+      {publications?.map((publication, index: number) => (
+        <SinglePublication
+          key={`${publication.id}_${index}`}
+          publication={publication as LensPublication}
+          showThread={type !== 'MEDIA'}
+        />
+      ))}
     </InfiniteScroll>
   );
 };

@@ -3,7 +3,7 @@ import type { FC } from 'react';
 import { useAppStore } from 'src/store/app';
 
 import LoginButton from './LoginButton';
-import SignedUser from './SignedUser';
+import ProfileButton from './ProfileButton';
 
 export const NextLink = ({ href, children, ...rest }: Record<string, any>) => (
   <Link href={href} {...rest}>
@@ -18,7 +18,7 @@ const MenuItems: FC = () => {
     return <LoginButton />;
   }
 
-  return <SignedUser />;
+  return <ProfileButton />;
 };
 
 export default MenuItems;

@@ -5,7 +5,6 @@ import {
   ExclamationIcon,
   FingerPrintIcon,
   ShareIcon,
-  SparklesIcon,
   UserIcon
 } from '@heroicons/react/outline';
 import clsx from 'clsx';
@@ -61,10 +60,6 @@ const Sidebar: FC = () => {
       <Menu current={pathname == '/settings/allowance'} url="/settings/allowance">
         <ShareIcon className="w-4 h-4" />
         <div>Allowance</div>
-      </Menu>
-      <Menu current={pathname == '/settings/cleanup'} url="/settings/cleanup">
-        <SparklesIcon className="w-4 h-4" />
-        <div>Cleanup</div>
       </Menu>
       <Menu current={pathname == '/settings/delete'} url="/settings/delete">
         <ExclamationIcon className="w-4 h-4 text-red-500" />

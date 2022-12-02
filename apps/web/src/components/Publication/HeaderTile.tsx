@@ -83,7 +83,7 @@ const HeaderTile: FC<Props> = ({
         <div className="flex items-center space-x-3">
           <UserAvatar />
           <div className="flex flex-row space-x-2 text-sm dark:text-white text-gray-800">
-            <span className="mr-0 text-sm">Posted by</span> <UserName />
+            <UserName />
             {showBio && profile?.bio && (
               <div className={clsx(!isSmall ? 'text-base' : 'text-sm', 'mt-2', 'linkify leading-6')}>
                 <Markup>{profile?.bio}</Markup>

@@ -54,7 +54,7 @@ const AllowanceSettings: NextPage = () => {
   }
 
   return (
-    <GridLayout>
+    <GridLayout className="max-w-7xl mx-auto mt-8 w-full">
       <MetaTags title={`Allowance settings • ${APP_NAME}`} />
       <GridItemFour>
         <Sidebar />

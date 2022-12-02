@@ -3,7 +3,6 @@ import { Tooltip } from '@components/UI/Tooltip';
 import GetModuleIcon from '@components/utils/GetModuleIcon';
 import { CashIcon } from '@heroicons/react/outline';
 import { getModule } from '@lib/getModule';
-import { motion } from 'framer-motion';
 import type { FC } from 'react';
 import { useState } from 'react';
 import { useCollectModuleStore } from 'src/store/collect-module';
@@ -15,20 +14,19 @@ const CollectSettings: FC = () => {
   const [showModal, setShowModal] = useState(false);
 
   return (
-    <>
+    <div
+      className="flex flex-row space-x-3 w-full py-3 px-3 rounded-xl border border-gray-700 hover:bg-brand-900 cursor-pointer"
+      onClick={() => {
+        setShowModal(!showModal);
+      }}
+    >
       <Tooltip placement="top" content={getModule(selectedCollectModule).name}>
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          type="button"
-          onClick={() => {
-            setShowModal(!showModal);
-          }}
-          aria-label="Choose Collect Module"
-        >
+        <button type="button" aria-label="Choose Collect Module" className="flex flex-row space-x-3">
           <div className="text-brand">
-            <GetModuleIcon module={selectedCollectModule} size={5} />
+            <GetModuleIcon module={selectedCollectModule} size={6} />
           </div>
-        </motion.button>
+          <span>{getModule(selectedCollectModule).name}</span>
+        </button>
       </Tooltip>
       <Modal
         title="Collect settings"
@@ -38,7 +36,7 @@ const CollectSettings: FC = () => {
       >
         <CollectForm setShowModal={setShowModal} />
       </Modal>
-    </>
+    </div>
   );
 };
 
