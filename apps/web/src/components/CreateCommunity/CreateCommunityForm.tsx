@@ -9,6 +9,7 @@ import { PlusIcon } from '@heroicons/react/outline';
 import getIPFSLink from '@lib/getIPFSLink';
 import imageProxy from '@lib/imageProxy';
 import uploadToIPFS from '@lib/uploadToIPFS';
+import axios from 'axios';
 import { COVER, SIGN_WALLET } from 'data/constants';
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
@@ -38,12 +39,26 @@ function CreateCommunityForm({}: Props) {
   });
 
   const createCommunity = async (name: string, bio: string) => {
-    console.log('name', name);
-    console.log('bio :>> ', bio);
     if (!currentProfile) {
       return toast.error(SIGN_WALLET);
     }
     setIsUploading(true);
+
+    let createProfileResponse = await axios.post(
+      'http://localhost:3001/createProfile',
+      null,
+      {
+        params: {
+          handle: name,
+          profilePictureUri: cover,
+          bio,
+          lensToken: localStorage.getItem('accessToken')
+        }
+      }
+      // { headers: { 'Access-Control-Allow-Origin': '*' } }
+    );
+
+    console.log(createProfileResponse.data);
 
     // Upload to Arweave using Bundlr
 
@@ -54,8 +69,10 @@ function CreateCommunityForm({}: Props) {
     evt.preventDefault();
     setUploading(true);
     try {
+      console.log('uploading');
       const attachment = await uploadToIPFS(evt.target.files);
       if (attachment[0]?.item) {
+        console.log(attachment[0].item);
         setCover(attachment[0].item);
       }
     } finally {
@@ -83,7 +100,7 @@ function CreateCommunityForm({}: Props) {
           {...form.register('bio')}
         />
         <div className="space-y-1.5">
-          <div className="label">Communitu Profile Pic</div>
+          <div className="label">Community Profile Pic</div>
           <div className="space-y-3">
             {cover && (
               <div>
