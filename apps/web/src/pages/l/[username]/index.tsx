@@ -4,15 +4,15 @@ import { useProfileTypeStore } from 'src/store/profile-type';
 
 type Props = {};
 
-function UserProfile({}: Props) {
+function CommunityProfile({}: Props) {
   const setProfileType = useProfileTypeStore((state) => state.setProfileType);
 
   useEffect(() => {
-    setProfileType('USER');
+    setProfileType('COMMUNITY');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <ViewProfile isCommunity />;
 }
 
-export default UserProfile;
+export default CommunityProfile;

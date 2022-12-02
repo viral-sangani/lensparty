@@ -9,6 +9,7 @@ import Custom404 from 'src/pages/404';
 import Custom500 from 'src/pages/500';
 import { useAppStore } from 'src/store/app';
 import { useProfileTabStore } from 'src/store/profile-tab';
+import { useProfileTypeStore } from 'src/store/profile-type';
 
 import AllowanceSettings from './Allowance';
 import Details from './Details';
@@ -20,6 +21,8 @@ import EditProfile from './Profile';
 import ProfilePageShimmer from './Shimmer';
 
 const ViewProfile: NextPage = () => {
+  const profileType = useProfileTypeStore((state) => state.profileType);
+
   const {
     query: { username, type }
   } = useRouter();
@@ -52,15 +55,18 @@ const ViewProfile: NextPage = () => {
   const profile = data?.profile;
 
   const renderTab = () => {
+    console.log('currTab', currTab);
     switch (currTab) {
       case 'PROFILE':
         return (
           <>
-            <FeedType stats={profile?.stats as any} setFeedType={setFeedType} feedType={feedType} />
-            {(feedType === 'FEED' || feedType === 'REPLIES' || feedType === 'MEDIA') && (
-              <Feed profile={profile as any} type={feedType} />
+            {profileType === 'USER' && (
+              <FeedType stats={profile?.stats as any} setFeedType={setFeedType} feedType={feedType} />
             )}
-            {feedType === 'NFT' && <NFTFeed profile={profile as any} />}
+            {(feedType === 'FEED' || feedType === 'REPLIES' || feedType === 'MEDIA') && (
+              <Feed profile={profile as any} type={profileType === 'COMMUNITY' ? 'FEED' : feedType} />
+            )}
+            {profileType === 'USER' && feedType === 'NFT' && <NFTFeed profile={profile as any} />}
           </>
         );
       case 'EDITPROFILE':

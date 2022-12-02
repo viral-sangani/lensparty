@@ -18,6 +18,7 @@ const Menu: FC<MenuProps> = ({ children, tab }) => {
       } flex items-center space-x-3 rounded-lg px-3 py-2 hover:bg-brand-100 hover:text-brand dark:hover:bg-opacity-20 dark:bg-opacity-20 hover:bg-opacity-100`}
       onClick={(e) => {
         e.preventDefault();
+        console.log('tab', tab);
         setCurrTab(tab);
       }}
     >
@@ -32,9 +33,7 @@ interface SidebarProps {
 
 const ProfileSidebar: FC<SidebarProps> = ({ className }) => {
   return (
-    <div
-      className={`mt-0 py-0 rounded-lg mb-0 space-y-1.5 sm:px-0 dark:bg-black bg-white ${className ?? ''}`}
-    >
+    <div className={`mt-0 p-3 rounded-lg mb-0 space-y-1.5 dark:bg-black bg-white ${className ?? ''}`}>
       <Menu tab={'PROFILE'}>
         <UserIcon className="w-5 h-5 dark:text-gray-200 text-black" />
         <div className="dark:text-gray-200 text-black">Profile</div>
@@ -43,16 +42,6 @@ const ProfileSidebar: FC<SidebarProps> = ({ className }) => {
         <PencilAltIcon className="w-5 h-5 dark:text-gray-200 text-black" />
         <div className="dark:text-gray-200 text-black">Edit Profile</div>
       </Menu>
-      {/* <Menu tab={'INTERESTS'}>
-        <FireIcon className="w-5 h-5 dark:text-gray-200 text-black" />
-        <div className="dark:text-gray-200 text-black">Interests</div>
-      </Menu> */}
-
-      {/* <Menu tab={'DISPATCHER'}>
-        <FingerPrintIcon className="w-5 h-5 dark:text-gray-200 text-black" />
-        <div className="dark:text-gray-200 text-black">Dispatcher</div>
-      </Menu> */}
-
       <Menu tab={'ALLOWANCE'}>
         <AdjustmentsIcon className="w-5 h-5 dark:text-gray-200 text-black" />
         <div className="dark:text-gray-200 text-black">Allowance</div>

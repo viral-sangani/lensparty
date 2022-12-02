@@ -8,13 +8,11 @@ import Unfollow from '@components/Shared/Unfollow';
 import { Modal } from '@components/UI/Modal';
 import { Tooltip } from '@components/UI/Tooltip';
 import { HashtagIcon, LocationMarkerIcon, UsersIcon } from '@heroicons/react/outline';
-import { BadgeCheckIcon } from '@heroicons/react/solid';
 import buildConversationId from '@lib/buildConversationId';
 import { buildConversationKey } from '@lib/conversationKey';
 import formatAddress from '@lib/formatAddress';
 import getAttribute from '@lib/getAttribute';
 import getAvatar from '@lib/getAvatar';
-import isVerified from '@lib/isVerified';
 import { STATIC_IMAGES_URL } from 'data/constants';
 import type { Profile } from 'lens';
 import { useTheme } from 'next-themes';
@@ -73,11 +71,6 @@ const Details: FC<Props> = ({ profile }) => {
           <div className="py-2 flex flex-col space-y-0">
             <div className="flex gap-1 items-center text-2xl font-bold">
               <div className="truncate">{profile?.name ?? profile?.handle}</div>
-              {isVerified(profile?.id) && (
-                <Tooltip content="Verified">
-                  <BadgeCheckIcon className="w-6 h-6 text-brand" />
-                </Tooltip>
-              )}
             </div>
             <div className="flex items-center space-x-3">
               {profile?.name ? (
