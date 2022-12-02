@@ -64,7 +64,7 @@ const Sidebar: FC<SidebarProps> = ({ className }) => {
             <PlusCircleIcon className="w-4 h-4 dark:text-gray-200 text-black" />
             <div className="dark:text-gray-200 text-black">Create Community</div>
           </Menu>
-          <Menu current={pathname == `/profile`} url={`/u/${currentProfile.handle}`}>
+          <Menu current={pathname == `/u/${currentProfile.handle}`} url={`/u/${currentProfile.handle}`}>
             <UserCircleIcon className="w-4 h-4 dark:text-gray-200 text-black" />
             <div className="dark:text-gray-200 text-black">Profile</div>
           </Menu>
