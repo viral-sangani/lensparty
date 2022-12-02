@@ -16,16 +16,17 @@ interface Props {
   feedType?: PublicationSortCriteria;
 }
 
-const Feed: FC<Props> = ({ focus, feedType = PublicationSortCriteria.CuratedProfiles }) => {
+const Feed: FC<Props> = ({ focus, feedType = PublicationSortCriteria.Latest }) => {
   const currentProfile = useAppStore((state) => state.currentProfile);
 
   // Variables
   const request = {
     sortCriteria: feedType,
     noRandomize: feedType === 'LATEST',
-    customFilters: [CustomFiltersTypes.Gardeners],
+    // customFilters: [CustomFiltersTypes.Gardeners],
     metadata: focus ? { mainContentFocus: focus } : null,
-    limit: 10
+    limit: 10,
+    sources: ['lensparty']
   };
   const reactionRequest = currentProfile ? { profileId: currentProfile?.id } : null;
   const profileId = currentProfile?.id ?? null;

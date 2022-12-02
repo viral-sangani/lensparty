@@ -7,13 +7,14 @@ import getAttribute from '@lib/getAttribute';
 import getAvatar from '@lib/getAvatar';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import type { Profile } from 'lens';
+import type { MetadataAttributeOutput, Profile } from 'lens';
 import Link from 'next/link';
 import type { FC } from 'react';
 import { useState } from 'react';
 
 interface Props {
   profile: Profile;
+  isCommunity?: boolean;
   showBio?: boolean;
   showFollow?: boolean;
   followStatusLoading?: boolean;
@@ -23,10 +24,13 @@ interface Props {
   showStatus?: boolean;
   showUserPreview?: boolean;
   timestamp?: string | number | Date;
+  attributes: MetadataAttributeOutput[];
 }
 
 const HeaderTile: FC<Props> = ({
   profile,
+  isCommunity = false,
+  attributes = [],
   showBio = false,
   showFollow = false,
   followStatusLoading = false,
@@ -59,7 +63,7 @@ const HeaderTile: FC<Props> = ({
 
   const UserName = () => (
     <>
-      <Slug gradient={false} className="text-sm" slug={profile?.handle} prefix="u/" />
+      <Slug gradient={false} className="text-sm" slug={profile?.handle} prefix="l/" />
       {showStatus && hasStatus ? (
         <div className="flex items-center text-gray-500">
           <span className="mx-1.5">·</span>
@@ -72,6 +76,34 @@ const HeaderTile: FC<Props> = ({
     </>
   );
 
+  const MemberName = () => {
+    if (isCommunity) {
+      let handleMetadata = attributes.filter((attribute) => {
+        return attribute.traitType === 'postedByHandle';
+      })[0] as MetadataAttributeOutput;
+
+      console.log(handleMetadata);
+      if (handleMetadata) {
+        return (
+          <>
+            <Slug gradient={false} className="text-sm" slug={handleMetadata.value as string} prefix="m/" />
+            {showStatus && hasStatus ? (
+              <div className="flex items-center text-gray-500">
+                <span className="mx-1.5">·</span>
+                <span className="text-xs flex items-center space-x-1 max-w-[10rem]">
+                  <span>{statusEmoji}</span>
+                  <span className="truncate">{statusMessage}</span>
+                </span>
+              </div>
+            ) : null}
+          </>
+        );
+      } else return null;
+    } else {
+      return null;
+    }
+  };
+
   const UserInfo: FC = () => {
     return (
       <UserPreview
@@ -83,7 +115,18 @@ const HeaderTile: FC<Props> = ({
         <div className="flex items-center space-x-3">
           <UserAvatar />
           <div className="flex flex-row space-x-2 text-sm dark:text-white text-gray-800">
-            <UserName />
+            {isCommunity ? (
+              <>
+                <span className="mr-0 text-sm">
+                  <UserName />
+                </span>
+                <span className="mr-0 text-sm">Posted by</span> <MemberName />
+              </>
+            ) : (
+              <span className="mr-0 text-sm">
+                <UserName />
+              </span>
+            )}
             {showBio && profile?.bio && (
               <div className={clsx(!isSmall ? 'text-base' : 'text-sm', 'mt-2', 'linkify leading-6')}>
                 <Markup>{profile?.bio}</Markup>

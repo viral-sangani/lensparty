@@ -36,11 +36,19 @@ const SinglePublication: FC<Props> = ({
   const isMirror = publication.__typename === 'Mirror';
   const firstComment = feedItem?.comments && feedItem.comments[0];
   const rootPublication = feedItem ? (firstComment ? firstComment : feedItem?.root) : publication;
+  const profileAttributes = publication.profile.attributes;
+  let isCommunity =
+    profileAttributes?.filter((attribute) => {
+      return attribute.key === 'profileType' && attribute.value === 'community';
+    }).length > 0;
   const profile = feedItem
     ? rootPublication.profile
     : isMirror
     ? publication?.mirrorOf?.profile
     : publication?.profile;
+
+  const attributes = publication.metadata.attributes;
+
   const timestamp = feedItem
     ? rootPublication.createdAt
     : isMirror
@@ -58,6 +66,8 @@ const SinglePublication: FC<Props> = ({
         <span onClick={(event) => event.stopPropagation()}>
           <HeaderTile
             isSmall={true}
+            isCommunity={isCommunity}
+            attributes={attributes}
             profile={profile ?? publication?.collectedBy?.defaultProfile}
             showStatus
             timestamp={timestamp}
