@@ -22,6 +22,7 @@ import ProfilePageShimmer from './Shimmer';
 
 const ViewProfile: NextPage = () => {
   const profileType = useProfileTypeStore((state) => state.profileType);
+  const setProfileType = useProfileTypeStore((state) => state.setProfileType);
 
   const {
     query: { username, type }
@@ -53,6 +54,10 @@ const ViewProfile: NextPage = () => {
   }
 
   const profile = data?.profile;
+  let attributes = profile.attributes;
+
+  let profileTypeAttribute = attributes?.filter((attribute) => attribute.key === 'profileType');
+  setProfileType(profileTypeAttribute && profileTypeAttribute?.length > 0 ? 'COMMUNITY' : 'USER');
 
   const renderTab = () => {
     console.log('currTab', currTab);
