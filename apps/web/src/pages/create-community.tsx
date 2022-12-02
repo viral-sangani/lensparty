@@ -1,3 +1,3 @@
-import CreateCommunity from '@components/CreateCommunity';
+import CreateCommunity from '@components/Community/CreateCommunity';
 
 export default CreateCommunity;
