@@ -38,6 +38,7 @@ const SinglePublication: FC<Props> = ({
   const rootPublication = feedItem ? (firstComment ? firstComment : feedItem?.root) : publication;
   const profileAttributes = publication.profile.attributes;
   let isCommunity =
+    profileAttributes &&
     profileAttributes?.filter((attribute) => {
       return attribute.key === 'profileType' && attribute.value === 'community';
     }).length > 0;
@@ -66,7 +67,7 @@ const SinglePublication: FC<Props> = ({
         <span onClick={(event) => event.stopPropagation()}>
           <HeaderTile
             isSmall={true}
-            isCommunity={isCommunity}
+            isCommunity={isCommunity ?? false}
             attributes={attributes}
             profile={profile ?? publication?.collectedBy?.defaultProfile}
             showStatus
