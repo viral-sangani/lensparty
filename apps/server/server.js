@@ -874,6 +874,45 @@ app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (re
   }
 });
 
+app.post('/coverPicture', authenticateMiddleWare, requiresToken, async (req, res, next) => {
+  let { profileId, cover_picture } = req.body;
+
+  let profile = await getProfileUsingProfileId(profileId);
+
+  let { metadata } = profile;
+
+  let finalMetadata = { ...metadata, cover_picture };
+
+  let setMetadataResponse = await axios({
+    url: API_URL,
+    method: 'post',
+    data: {
+      query: setProfileMetadata,
+      variables: {
+        request: {
+          profileId,
+          metadata: finalMetadata
+        }
+      }
+    },
+    headers: {
+      'x-access-token': `Bearer ${accessToken}`
+    }
+  });
+
+  let signature = await signMessage(setMetadataResponse.data.data.createSetProfileMetadataTypedData);
+
+  let broadcastResponse = await broadcastTransaction(
+    accessToken,
+    setMetadataResponse.data.data.createSetProfileMetadataTypedData.id,
+    signature
+  );
+
+  res.status(200).json({
+    data: broadcastResponse
+  });
+});
+
 app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, next) => {
   let { profileId, posterProfileId, collectModule, contentURI } = req.body;
   let { address } = res.locals.jwtDecoded;
