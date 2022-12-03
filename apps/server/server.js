@@ -681,7 +681,7 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
   const newNFT = await revise.addNFT(
     {
       name: `${handle}'s follow nft`,
-      image: profilePictureUri,
+      image: `https://picsum.photos/id/0/200`,
       tokenId: v4()
     },
     [{ posts: 0 }]
@@ -1026,6 +1026,7 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
 
     let result = await revise
       .nft(nft)
+      .setImage(`https://picsum.photos/id/${posts[0].posts + 1}/400`)
       .setProperty('posts', posts[0].posts + 1)
       .save();
 
