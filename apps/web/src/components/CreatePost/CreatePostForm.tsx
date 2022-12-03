@@ -190,26 +190,29 @@ const CreatePostForm: FC<Props> = () => {
         createdOn: new Date(),
         appId: APP_NAME
       });
-      console.log('id', id);
-      console.log('forCommunity :>> ', forCommunity);
       if (forCommunity) {
         console.log('Request', {
           profileId: profile?.id,
           posterProfileId: currentProfile.id,
           collectModule: payload,
-          lensToken: localStorage.getItem('accessToken')
+          lensToken: localStorage.getItem('accessToken'),
+          contentURI: `https://arweave.net/${id}`
         });
         // let createPostResponse = await axios.post('http://localhost:3001/createPost', {
         //   profileId: profile?.id,
         //   posterProfileId: currentProfile.id,
         //   collectModule: payload,
-        //   lensToken: localStorage.getItem('lensToken')
+        //   lensToken: localStorage.getItem('lensToken'),
+        //   contentURI: `https://arweave.net/${id}`
         // });
+        // console.log('createPostResponse.data', createPostResponse.data);
         // let tx = createPostResponse.data.data.txHash;
         // setTxHash(tx);
         // setIsIndexing(true);
+        // console.log('WAITING...');
         // await axios.get(`http://localhost:3001/hastransactionbeenindexed?txHash=${tx}`);
         // setIsIndexing(false);
+        // console.log('DOME...');
       } else {
         const request = {
           profileId: currentProfile?.id,
