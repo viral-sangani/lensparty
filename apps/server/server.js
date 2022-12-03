@@ -677,11 +677,19 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
     auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMWZjMTcwLTllZWQtNDU4OC05MzUwLWM0M2VlOGU4NmU0OSIsImtleSI6ImUyczMyNzh4IiwiaWF0IjoxNjcwMDU5NDI0fQ.r5_qRwXyvizqQDEnVNmB4997LtJ7ccf3v3UH2zIBG-o'
   });
 
+  let buffer = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="300" height="300" viewBox="0 0 1080 1080" xml:space="preserve"><desc>Created with Fabric.js 5.2.4</desc><defs></defs><g transform="matrix(1 0 0 1 540 540)" id="39f5007a-21e8-4579-9e06-ce979cc0e7fc"><rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="non-scaling-stroke" x="-540" y="-540" rx="0" ry="0" width="1080" height="1080"/></g><g transform="matrix(1 0 0 1 540 540)" id="b2eacb88-a819-474f-bc04-3fe88228955e"></g><g transform="matrix(1 0 0 1 540 835.7)" style="" id="41414c05-bea9-4bbb-b05a-6631c150ac8a"><text xml:space="preserve" font-family="Alegreya" font-size="80" font-style="normal" font-weight="700" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-88.24" y="25.13">Posts</tspan></text></g><g transform="matrix(1 0 0 1 540 462.78)" style="" id="e145f7c9-db59-40da-8538-af404c48ccd5"><text xml:space="preserve" font-family="Raleway" font-size="200" font-style="normal" font-weight="900" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-61.4" y="62.83">0</tspan></text></g></svg>`
+  );
+
+  let base64 = buffer.toString('base64');
+
+  let imageSvg = await uploadToIpfs(`${v4()}.json`, `data:image/svg+xml;base64,${base64}`);
+
   // revise dynamic nft
   const newNFT = await revise.addNFT(
     {
       name: `${handle}'s follow nft`,
-      image: `https://picsum.photos/id/0/200`,
+      image: `https://lensparty-production.up.railway.app/svg/0`,
       tokenId: v4()
     },
     [{ posts: 0 }]
@@ -874,14 +882,24 @@ app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (re
   }
 });
 
-app.post('/coverPicture', authenticateMiddleWare, requiresToken, async (req, res, next) => {
+app.post('/coverPicture', authenticateMiddleWare, async (req, res, next) => {
   let { profileId, cover_picture } = req.body;
+  let { accessToken } = await parseTokens();
 
   let profile = await getProfileUsingProfileId(profileId);
 
-  let { metadata } = profile;
+  let { metadata: metadataUrl } = profile;
 
-  let finalMetadata = { ...metadata, cover_picture };
+  let { data: metadata } = await axios.get(metadataUrl, {
+    headers: {
+      'Accept-Encoding': 'application/json'
+    }
+  });
+
+  console.log(metadata);
+
+  console.log({ ...metadata, cover_picture });
+  let finalMetadata = await uploadToIpfs(`${v4()}.json`, { ...metadata, cover_picture });
 
   let setMetadataResponse = await axios({
     url: API_URL,
@@ -1055,7 +1073,8 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
 
     let result = await revise
       .nft(nft)
-      .setImage(`https://picsum.photos/id/${posts[0].posts + 1}/400`)
+      // .setImage(`https://picsum.photos/id/${posts[0].posts + 1}/400`)
+      .setImage(`https://lensparty-production.up.railway.app/svg/${posts[0].posts + 1}`)
       .setProperty('posts', posts[0].posts + 1)
       .save();
 
@@ -1098,55 +1117,57 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
   }
 });
 
-app.post('/optin', authenticateMiddleWare, requiresToken, async (req, res, next) => {
-  let { address } = res.locals.jwtDecoded;
-  let { profileId } = req.body;
+// app.post('/optin', authenticateMiddleWare, requiresToken, async (req, res, next) => {
+//   let { address } = res.locals.jwtDecoded;
+//   let { accessToken } = await parseTokens();
+//   let { profileId } = req.body;
 
-  let profile = await getProfileUsingProfileId(profileId);
+//   let profile = await getProfileUsingProfileId(profileId);
+//   console.log(profile);
+//   let optedIn = profile.attributes.filter((attribute) => attribute.key === 'optedIn');
+//   let newAttributes = profile.attributes.filter((attribute) => attribute.key !== 'optedIn');
 
-  let optedIn = profile.metadata.attributes.filter((attribute) => attribute.key === 'optedIn');
-  let newAttributes = profile.metadata.attributes.filter((attribute) => attribute.key !== 'optedIn');
-  if (optedIn) {
-    optedIn[0].value = optedIn[0].value.length > 0 ? `${optedIn[0].value},${address}` : `${address}`;
-    newAttributes.push(optedIn[0]);
-  } else {
-    newAttributes.push({ traitType: 'string', key: 'optedIn', value: address });
-  }
+//   if (optedIn.length) {
+//     optedIn[0].value = optedIn[0].value.length > 0 ? `${optedIn[0].value},${address}` : `${address}`;
+//     newAttributes.push(optedIn[0]);
+//   } else {
+//     newAttributes.push({ traitType: 'string', key: 'optedIn', value: address });
+//   }
 
-  let metadata = {
-    ...profile.metadata,
-    attributes: newAttributes
-  };
+//   let metadata = {
+//     ...profile.metadata,
+//     attributes: newAttributes
+//   };
 
-  let setMetadataResponse = await axios({
-    url: API_URL,
-    method: 'post',
-    data: {
-      query: setProfileMetadata,
-      variables: {
-        request: {
-          profileId,
-          metadata: finalMetadata
-        }
-      }
-    },
-    headers: {
-      'x-access-token': `Bearer ${accessToken}`
-    }
-  });
+//   let setMetadataResponse = await axios({
+//     url: API_URL,
+//     method: 'post',
+//     data: {
+//       query: setProfileMetadata,
+//       variables: {
+//         request: {
+//           profileId,
+//           metadata
+//         }
+//       }
+//     },
+//     headers: {
+//       'x-access-token': `Bearer ${accessToken}`
+//     }
+//   });
 
-  let signature = await signMessage(setMetadataResponse.data.data.createSetProfileMetadataTypedData);
+//   let signature = await signMessage(setMetadataResponse.data.data.createSetProfileMetadataTypedData);
 
-  let broadcastResponse = await broadcastTransaction(
-    accessToken,
-    setMetadataResponse.data.data.createSetProfileMetadataTypedData.id,
-    signature
-  );
+//   let broadcastResponse = await broadcastTransaction(
+//     accessToken,
+//     setMetadataResponse.data.data.createSetProfileMetadataTypedData.id,
+//     signature
+//   );
 
-  res.status(200).json({
-    data: broadcastResponse
-  });
-});
+//   res.status(200).json({
+//     data: broadcastResponse
+//   });
+// });
 
 app.get('/hastransactionbeenindexed', async (req, res, next) => {
   let { txHash } = req.query;
@@ -1157,9 +1178,25 @@ app.get('/hastransactionbeenindexed', async (req, res, next) => {
   res.status(200).json({ data: result });
 });
 
+<<<<<<< HEAD
 app.listen(process.env.PORT, '0.0.0.0', () => {
   console.log('process.env.PORT', process.env.PORT);
   console.log('SERVER STARTED');
+=======
+app.get('/svg/:post', async (req, res, next) => {
+  let { post } = req.params.post;
+
+  let buffer = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="300" height="300" viewBox="0 0 1080 1080" xml:space="preserve"><desc>Created with Fabric.js 5.2.4</desc><defs></defs><g transform="matrix(1 0 0 1 540 540)" id="39f5007a-21e8-4579-9e06-ce979cc0e7fc"><rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="non-scaling-stroke" x="-540" y="-540" rx="0" ry="0" width="1080" height="1080"/></g><g transform="matrix(1 0 0 1 540 540)" id="b2eacb88-a819-474f-bc04-3fe88228955e"></g><g transform="matrix(1 0 0 1 540 835.7)" style="" id="41414c05-bea9-4bbb-b05a-6631c150ac8a"><text xml:space="preserve" font-family="Alegreya" font-size="80" font-style="normal" font-weight="700" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-88.24" y="25.13">Posts</tspan></text></g><g transform="matrix(1 0 0 1 540 462.78)" style="" id="e145f7c9-db59-40da-8538-af404c48ccd5"><text xml:space="preserve" font-family="Raleway" font-size="200" font-style="normal" font-weight="900" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-61.4" y="62.83">${post}</tspan></text></g></svg>`
+  );
+  let base64 = buffer.toString('base64');
+  console.log(`data:image/svg+xml;base64,${base64}`);
+  res.send(`data:image/svg+xml;base64,${base64}`);
+});
+
+app.listen(PORT, () => {
+  console.log('Listening at port: ', PORT);
+>>>>>>> 7a403f29340d89a1ae0dbf6baae13ca3d205fe0d
   Moralis.start({
     apiKey: process.env.MORALIS_API_KEY
   });
