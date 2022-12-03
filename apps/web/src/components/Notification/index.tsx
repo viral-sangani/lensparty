@@ -21,33 +21,7 @@ const Notification: FC = () => {
     <div className="flex flex-grow justify-center px-0 sm:px-6 lg:px-8 py-8">
       <MetaTags title={`Notifications • ${APP_NAME}`} />
       <div className="max-w-4xl w-full space-y-3">
-        <div className="flex gap-3 pb-2">
-          <TabButton
-            name="All notifications"
-            icon={<LightningBoltIcon className="w-4 h-4" />}
-            active={feedType === 'ALL'}
-            onClick={() => {
-              setFeedType('ALL');
-            }}
-          />
-          <TabButton
-            name="Mentions"
-            icon={<AtSymbolIcon className="w-4 h-4" />}
-            active={feedType === 'MENTIONS'}
-            onClick={() => {
-              setFeedType('MENTIONS');
-            }}
-          />
-          <TabButton
-            name="Comments"
-            icon={<ChatAlt2Icon className="w-4 h-4" />}
-            active={feedType === 'COMMENTS'}
-            onClick={() => {
-              setFeedType('COMMENTS');
-            }}
-          />
-        </div>
-        <List feedType={feedType} />
+        <List feedType={'ALL'} />
       </div>
     </div>
   );
