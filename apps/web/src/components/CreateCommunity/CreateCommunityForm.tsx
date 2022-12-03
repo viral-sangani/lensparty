@@ -106,7 +106,18 @@ function CreateCommunityForm({}: Props) {
     }
   };
 
-  const isLoading = isUploading || uploading || isIndexing;
+  const isLoading = isUploading || uploading || isIndexing || loading;
+
+  if (loading) {
+    return (
+      <Card>
+        <div className="p-5 py-10 space-y-2 text-center">
+          <Spinner size="md" className="mx-auto" />
+          <div>Loading super follow settings</div>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card className="p-5">
