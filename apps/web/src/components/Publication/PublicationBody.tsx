@@ -22,7 +22,7 @@ const PublicationBody: FC<Props> = ({ publication }) => {
   };
 
   return (
-    <div className="break-words">
+    <div className="break-words pb-2">
       {/* Title */}
       {publication.metadata.name && (
         <Title

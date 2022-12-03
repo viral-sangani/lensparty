@@ -63,7 +63,7 @@ const SinglePublication: FC<Props> = ({
       ) : (
         <PublicationType publication={publication} showType={showType} showThread={showThread} />
       )}
-      <div className="pb-4 w-full">
+      <div className="pb-1 w-full">
         <span onClick={(event) => event.stopPropagation()}>
           <HeaderTile
             isSmall={true}
