@@ -1,5 +1,5 @@
-const dotenv = require('dotenv').config();
 const express = require('express');
+const dotenv = require('dotenv').config();
 const axios = require('axios');
 const { Wallet, providers, ethers } = require('ethers');
 const fs = require('fs');
@@ -7,6 +7,7 @@ const Moralis = require('moralis').default;
 const { v4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const PushAPI = require('@pushprotocol/restapi');
 
 const API_URL = 'https://api-mumbai.lens.dev';
 const PORT = 3001;
@@ -314,9 +315,21 @@ query Profile($request: SingleProfileQueryRequest!, $profileId: ProfileId!) {
   
   `;
 
+const followers = `
+
+query Followers ($request: FollowersRequest!) {
+    followers(request: $request) {
+        items {
+            wallet {
+                address
+            }
+        }
+    }
+  }
+`;
+
 function requiresToken(req, res, next) {
   let { lensToken } = req.query;
-  console.log('lensToken', lensToken);
   if (lensToken) {
     let decoded = jwt.decode(lensToken);
     console.log(decoded);
@@ -367,7 +380,6 @@ const hasTxBeenIndexed = async (accessToken, txHash) => {
   });
 
   const result = transactionIndexedResponse.data;
-  console.log('result', result);
   return result.data.hasTxHashBeenIndexed;
 };
 
@@ -517,6 +529,10 @@ async function verifyAccessToken(accessToken) {
 }
 
 async function uploadToIpfs(name, content) {
+  await Moralis.start({
+    apiKey: process.env.MORALIS_API_KEY
+  });
+
   const uploadArray = [
     {
       path: name,
@@ -627,6 +643,47 @@ async function getProfileAttribute(profileId, attributeKey) {
   return attributes.filter((attribute) => attribute.key === attributeKey);
 }
 
+async function setProfileMetadataFn(id, metadata, accessToken) {
+  let setProfileMetadataResponse = await axios({
+    url: API_URL,
+    method: 'post',
+    data: {
+      query: setProfileMetadata,
+      variables: {
+        request: {
+          profileId: id,
+          metadata
+        }
+      }
+    },
+    headers: {
+      'x-access-token': `Bearer ${accessToken}`
+    }
+  });
+
+  let signature = await signMessage(setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData);
+
+  return signature;
+}
+
+async function getProfileFollowers(profileId) {
+  let followersResponse = await axios({
+    url: API_URL,
+    method: 'post',
+    data: {
+      query: followers,
+      variables: {
+        request: {
+          profileId,
+          limit: 50
+        }
+      }
+    }
+  });
+
+  return followersResponse.data.data.followers;
+}
+
 const app = express();
 
 app.use(cors());
@@ -659,15 +716,16 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
       }
     });
 
-    console.log('createProfileResponse', createProfileResponse.data);
-
     let { txHash } = createProfileResponse.data.data.createProfile;
-    console.log('txHash', txHash);
     await pollUntilIndexed(accessToken, txHash);
 
     let profile = await getProfileUsingHandle(`${handle}.test`);
 
     let { id } = profile;
+
+    await Moralis.start({
+      apiKey: process.env.MORALIS_API_KEY
+    });
 
     let metadata = await uploadToIpfs(`${handle}_metadata.json`, {
       version: '1.0.0',
@@ -689,25 +747,6 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
       ]
     });
 
-    let setProfileMetadataResponse = await axios({
-      url: API_URL,
-      method: 'post',
-      data: {
-        query: setProfileMetadata,
-        variables: {
-          request: {
-            profileId: id,
-            metadata
-          }
-        }
-      },
-      headers: {
-        'x-access-token': `Bearer ${accessToken}`
-      }
-    });
-
-    let signature = await signMessage(setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData);
-
     let broadcastResponse = await broadcastTransaction(
       accessToken,
 
@@ -728,6 +767,10 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
 app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (req, res, next) => {
   let { profileId } = req.query;
   let { accessToken } = parseTokens();
+
+  await Moralis.start({
+    apiKey: process.env.MORALIS_API_KEY
+  });
 
   let { address } = res.locals.jwtDecoded;
 
@@ -799,6 +842,8 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
   let { profileId, posterProfileId } = req.query;
   let { address } = res.locals.jwtDecoded;
   let { accessToken } = parseTokens();
+
+  const CHANNEL_PK = '0x39dd89ea3393380e5c16d7b0f0a72e936d2680e78a37b4bc68349f2dd170fa44';
 
   // create post
   // get community profile from profileId or handle
@@ -876,6 +921,7 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
       //     {
       //         item: "ipfs://bafybeihl6tle6ykrostimuemogf7ei2sprugp6qdsfrmdyq3hcunasd4qi",
       //     },
+
       // ],
       appId: 'lensparty'
     };
@@ -915,6 +961,35 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
       signature
     );
 
+    let { items } = await getProfileFollowers(profileId);
+
+    let addressSet = items.map((follower) => {
+      return `eip155:80001:${follower.wallet.address}`;
+    });
+
+    console.log(addressSet);
+
+    const wallet = new ethers.Wallet(process.env.PRIVATE_KEY);
+
+    const apiResponse = await PushAPI.payloads.sendNotification({
+      signer: wallet,
+      type: 4, // target
+      identityType: 2, // direct payload
+      notification: {
+        title: `${posterProfile.handle} posted in ${profile.handle}`,
+        body: `about optimizations on LensTube, how well the videos load for you?`
+      },
+      payload: {
+        title: `${posterProfile.handle} posted in ${profile.handle}`,
+        body: `about optimizations on LensTube, how well the videos load for you?`,
+        cta: '',
+        img: ''
+      },
+      recipients: addressSet, // recipient address
+      channel: 'eip155:80001:0x22ae7Cf4cD59773f058B685a7e6B7E0984C54966', // your channel address
+      env: 'staging'
+    });
+
     res.status(200).json({
       data: broadcastResponse
     });
@@ -946,6 +1021,15 @@ app.get('/decodejwt', async (req, res, next) => {
   });
 });
 
+app.get('/epns', async (req, res, next) => {
+  const channelData = await PushAPI.channels.getChannel({
+    channel: 'eip155:80001:0x22ae7Cf4cD59773f058B685a7e6B7E0984C54966', // channel address in CAIP
+    env: 'staging'
+  });
+
+  res.status(200).json({ data: apiResponse });
+});
+
 app.get('/isFollowing', async (req, res, next) => {
   let { profileId, whoProfileId } = req.query;
 
@@ -965,9 +1049,6 @@ app.get('/isFollowing', async (req, res, next) => {
     data: response.data.data.profile
   });
 });
-app.listen(PORT, async () => {
+app.listen(PORT, () => {
   console.log('Listening at port: ', PORT);
-  await Moralis.start({
-    apiKey: process.env.MORALIS_API_KEY
-  });
 });
