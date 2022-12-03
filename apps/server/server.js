@@ -8,6 +8,7 @@ const { v4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const PushAPI = require('@pushprotocol/restapi');
+const bodyParser = require('body-parser');
 
 const API_URL = 'https://api-mumbai.lens.dev';
 const PORT = 3001;
@@ -329,7 +330,7 @@ query Followers ($request: FollowersRequest!) {
 `;
 
 function requiresToken(req, res, next) {
-  let { lensToken } = req.query;
+  let { lensToken } = req.body;
   if (lensToken) {
     let decoded = jwt.decode(lensToken);
     console.log(decoded);
@@ -427,7 +428,6 @@ async function authenticateMiddleWare(req, res, next) {
 
     // check if accessToken is valid
     let isAccessTokenValid = await verifyAccessToken(accessToken);
-
     if (isAccessTokenValid) {
       // not expired
     } else {
@@ -449,7 +449,7 @@ async function authenticateMiddleWare(req, res, next) {
 
     // send signature for authentication
     let tokens = await authenticateSignedMessage(wallet.address, signature);
-
+    console.log(tokens);
     // on success write down the access_token and refresh_token in the file.
     writeAccessTokensToFile(tokens);
 
@@ -504,11 +504,13 @@ async function refreshAccessToken(refreshToken) {
     }
   });
 
+  console.log(refreshResponse.data.data.refresh);
+
   return refreshResponse.data.data.refresh;
 }
 
 function writeAccessTokensToFile(tokensObj) {
-  fs.writeFile('access_tokens.json', JSON.stringify(tokensObj), (err) => console.log(err));
+  fs.writeFileSync('access_tokens.json', JSON.stringify(tokensObj));
 }
 
 async function verifyAccessToken(accessToken) {
@@ -639,29 +641,6 @@ async function getProfileAttribute(profileId, attributeKey) {
   return attributes.filter((attribute) => attribute.key === attributeKey);
 }
 
-async function setProfileMetadataFn(id, metadata, accessToken) {
-  let setProfileMetadataResponse = await axios({
-    url: API_URL,
-    method: 'post',
-    data: {
-      query: setProfileMetadata,
-      variables: {
-        request: {
-          profileId: id,
-          metadata
-        }
-      }
-    },
-    headers: {
-      'x-access-token': `Bearer ${accessToken}`
-    }
-  });
-
-  let signature = await signMessage(setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData);
-
-  return signature;
-}
-
 async function getProfileFollowers(profileId) {
   let followersResponse = await axios({
     url: API_URL,
@@ -683,12 +662,35 @@ async function getProfileFollowers(profileId) {
 const app = express();
 
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, res, next) => {
   let { accessToken } = parseTokens();
-  let { handle, profilePictureUri, followNFTURI, followModule, bio } = req.query;
+
+  let { followModule, handle, profilePictureUri, bio, tags, nftCollection } = req.body;
 
   let { address } = res.locals.jwtDecoded;
+
+  let profileRequest = {
+    handle,
+    profilePictureUri,
+    // followNFTURI,
+    // feeFollowModule: {
+    //   amount: {
+    //     currency: '0xD40282e050723Ae26Aeb0F77022dB14470f4e011',
+    //     value: '0.01'
+    //   },
+    //   recipient: '0xEEA0C1f5ab0159dba749Dc0BAee462E5e293daaF'
+    // }
+    followModule: followModule
+      ? followModule
+      : {
+          freeFollowModule: true
+        }
+  };
+
+  console.log(profileRequest);
 
   try {
     let createProfileResponse = await axios({
@@ -697,14 +699,7 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
       data: {
         query: createProfile,
         variables: {
-          request: {
-            handle,
-            profilePictureUri,
-            // followNFTURI,
-            followModule: {
-              freeFollowModule: true
-            }
-          }
+          request: profileRequest
         }
       },
       headers: {
@@ -712,44 +707,86 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
       }
     });
 
-    let { txHash } = createProfileResponse.data.data.createProfile;
-    await pollUntilIndexed(accessToken, txHash);
+    let { reason } = createProfileResponse.data.data.createProfile;
 
-    let profile = await getProfileUsingHandle(`${handle}.test`);
+    if (!reason) {
+      let { txHash } = createProfileResponse.data.data.createProfile;
+      await pollUntilIndexed(accessToken, txHash);
 
-    let { id } = profile;
+      let profile = await getProfileUsingHandle(`${handle}.test`);
 
-    let metadata = await uploadToIpfs(`${handle}_metadata.json`, {
-      version: '1.0.0',
-      metadata_id: v4(),
-      name: handle,
-      bio,
-      cover_picture: null,
-      attributes: [
-        {
-          traitType: 'string',
-          key: 'profileType',
-          value: 'community'
+      let { id } = profile;
+
+      let metadata = await uploadToIpfs(`${handle}_metadata.json`, {
+        version: '1.0.0',
+        metadata_id: v4(),
+        name: handle,
+        bio: bio !== undefined ? bio : null,
+        cover_picture: null,
+        attributes: [
+          // tags !== undefined
+          //   ? {
+          //       traitType: 'string',
+          //       key: 'tags',
+          //       value: tags
+          //     }
+          //   : {
+          //       traitType: 'string',
+          //       key: 'tags',
+          //       value: ''
+          //     },
+          {
+            traitType: 'string',
+            key: 'profileType',
+            value: 'community'
+          },
+          {
+            traitType: 'string',
+            key: 'profileCreator',
+            value: address
+          },
+          {
+            displayType: 'number',
+            traitType: 'nft',
+            key: nftCollection,
+            value: 1
+          }
+        ]
+      });
+
+      let setProfileMetadataResponse = await axios({
+        url: API_URL,
+        method: 'post',
+        data: {
+          query: setProfileMetadata,
+          variables: {
+            request: {
+              profileId: id,
+              metadata
+            }
+          }
         },
-        {
-          traitType: 'string',
-          key: 'profileCreator',
-          value: address
+        headers: {
+          'x-access-token': `Bearer ${accessToken}`
         }
-      ]
-    });
+      });
 
-    let broadcastResponse = await broadcastTransaction(
-      accessToken,
+      let txid = setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData.id;
+      let signature = await signMessage(
+        setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData
+      );
 
-      setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData.id,
-      signature
-    );
+      let broadcastResponse = await broadcastTransaction(accessToken, txid, signature);
 
-    res.status(200).json({
-      data: broadcastResponse,
-      handle
-    });
+      res.status(200).json({
+        data: broadcastResponse,
+        handle
+      });
+    } else {
+      res.status(200).json({
+        data: { reason }
+      });
+    }
   } catch (err) {
     console.log(err);
     res.status(400).json({ error: err });
@@ -827,11 +864,9 @@ app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (re
 });
 
 app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, next) => {
-  let { profileId, posterProfileId } = req.query;
+  let { profileId, posterProfileId, collectModule, contentURI } = req.body;
   let { address } = res.locals.jwtDecoded;
   let { accessToken } = parseTokens();
-
-  const CHANNEL_PK = '0x39dd89ea3393380e5c16d7b0f0a72e936d2680e78a37b4bc68349f2dd170fa44';
 
   // create post
   // get community profile from profileId or handle
@@ -843,7 +878,7 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
   let conditions = profile.attributes.filter((attribute) => attribute.traitType == 'nft');
 
   let nftContractAddress = conditions[0].key;
-  let nftBalance = conditions[0].value;
+  // let nftBalance = conditions[0].value;
 
   // check if wallet meets the conditions to post
   let walletSatisfiesConditions = false;
@@ -869,52 +904,52 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
 
   if (walletSatisfiesConditions) {
     // post
-    let contentMetadata = {
-      version: '2.0.0',
-      metadata_id: v4(),
-      description: '',
-      content:
-        'about optimizations on LensTube, how well the videos load for you? Vote below and share more ideas to make LensTube more epic ✨🙏\n\n1 = fast\n2 = not fast enough',
-      locale: 'en-US',
-      // tags: ,
-      // contentWarning:
-      mainContentFocus: 'TEXT_ONLY',
-      name: 'Comment by @youmemeworld.lens',
-      // add an extra attribute of postedBy to know who posted on which community.
-      attributes: [
-        // ...argsAttributes,
-        {
-          displayType: 'string',
-          traitType: 'type',
-          value: 'text_only'
-        },
-        {
-          displayType: 'string',
-          traitType: 'postedBy',
-          value: address
-        },
-        {
-          displayType: 'string',
-          traitType: 'postedByHandle',
-          value: posterProfile.handle
-        },
-        {
-          displayType: 'string',
-          traitType: 'postedByProfileId',
-          value: posterProfile.id
-        }
-      ],
-      image: 'ipfs://bafkreih5usbykwf7eunzehikrmgy4oidv4w67cb7coyc2hhzlsgou3ur34',
-      // media: [
-      //     {
-      //         item: "ipfs://bafybeihl6tle6ykrostimuemogf7ei2sprugp6qdsfrmdyq3hcunasd4qi",
-      //     },
+    // let contentMetadata = {
+    //   version: '2.0.0',
+    //   metadata_id: v4(),
+    //   description: '',
+    //   content:
+    //     'about optimizations on LensTube, how well the videos load for you? Vote below and share more ideas to make LensTube more epic ✨🙏\n\n1 = fast\n2 = not fast enough',
+    //   locale: 'en-US',
+    //   // tags: ,
+    //   // contentWarning:
+    //   mainContentFocus: 'TEXT_ONLY',
+    //   name: 'Comment by @youmemeworld.lens',
+    //   // add an extra attribute of postedBy to know who posted on which community.
+    //   attributes: [
+    //     // ...argsAttributes,
+    //     {
+    //       displayType: 'string',
+    //       traitType: 'type',
+    //       value: 'text_only'
+    //     },
+    //     {
+    //       displayType: 'string',
+    //       traitType: 'postedBy',
+    //       value: address
+    //     },
+    //     {
+    //       displayType: 'string',
+    //       traitType: 'postedByHandle',
+    //       value: posterProfile.handle
+    //     },
+    //     {
+    //       displayType: 'string',
+    //       traitType: 'postedByProfileId',
+    //       value: posterProfile.id
+    //     }
+    //   ],
+    //   image: 'ipfs://bafkreih5usbykwf7eunzehikrmgy4oidv4w67cb7coyc2hhzlsgou3ur34',
+    //   // media: [
+    //   //     {
+    //   //         item: "ipfs://bafybeihl6tle6ykrostimuemogf7ei2sprugp6qdsfrmdyq3hcunasd4qi",
+    //   //     },
 
-      // ],
-      appId: 'lensparty'
-    };
+    //   // ],
+    //   appId: 'lensparty'
+    // };
 
-    let contentURI = await uploadToIpfs('Comment_by_@youmemeworld.lens', contentMetadata);
+    // let contentURI = await uploadToIpfs(`post_by_@${posterProfile.handle}`, contentMetadata);
 
     let createPostTypedDataResponse = await axios({
       url: API_URL,
@@ -925,13 +960,16 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
           request: {
             profileId: profile.id,
             contentURI,
-            collectModule: {
-              freeCollectModule: {
-                followerOnly: false
-              }
-            },
+            collectModule:
+              collectModule !== undefined
+                ? collectModule
+                : {
+                    freeCollectModule: {
+                      followerOnly: false
+                    }
+                  },
             referenceModule: {
-              followerOnlyReferenceModule: false
+              followerOnlyReferenceModule: true
             }
           }
         }
@@ -999,44 +1037,6 @@ app.get('/hastransactionbeenindexed', async (req, res, next) => {
   res.status(200).json({ data: result });
 });
 
-app.get('/decodejwt', async (req, res, next) => {
-  let { lensToken } = req.query;
-  let decoded = jwt.decode(lensToken);
-
-  res.status(200).json({
-    data: decoded,
-    expired: decoded.exp < Date.now() / 1000
-  });
-});
-
-app.get('/epns', async (req, res, next) => {
-  const channelData = await PushAPI.channels.getChannel({
-    channel: 'eip155:80001:0x22ae7Cf4cD59773f058B685a7e6B7E0984C54966', // channel address in CAIP
-    env: 'staging'
-  });
-
-  res.status(200).json({ data: apiResponse });
-});
-
-app.get('/isFollowing', async (req, res, next) => {
-  let { profileId, whoProfileId } = req.query;
-
-  let response = await axios({
-    url: API_URL,
-    method: 'post',
-    data: {
-      query: isFollowing,
-      variables: {
-        request: { profileId },
-        profileId: whoProfileId
-      }
-    }
-  });
-
-  res.status(200).json({
-    data: response.data.data.profile
-  });
-});
 app.listen(PORT, () => {
   console.log('Listening at port: ', PORT);
   Moralis.start({
