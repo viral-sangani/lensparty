@@ -688,7 +688,7 @@ app.use(cors());
 app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, res, next) => {
   let { accessToken } = parseTokens();
 
-  let { followModule, tag, handle, profilePictureUri, bio } = req.body;
+  let { followModule, tag, handle, profilePictureUri, bio, tags } = req.body;
 
   let { address } = res.locals.jwtDecoded;
 
@@ -740,6 +740,11 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
         bio,
         cover_picture: null,
         attributes: [
+          tags && {
+            traitType: 'string',
+            key: 'tags',
+            value: tags
+          },
           {
             traitType: 'string',
             key: 'profileType',
@@ -753,7 +758,7 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
         ]
       });
 
-      let signature = await setProfileMetadata(id, metadata, accessToken);
+      let signature = await setProfileMetadataFn(id, metadata, accessToken);
 
       let broadcastResponse = await broadcastTransaction(
         accessToken,
