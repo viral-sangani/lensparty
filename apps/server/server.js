@@ -1126,7 +1126,7 @@ app.post('/optin', authenticateMiddleWare, requiresToken, async (req, res, next)
       variables: {
         request: {
           profileId,
-          metadata: finalMetadata
+          metadata
         }
       }
     },
