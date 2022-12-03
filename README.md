@@ -42,6 +42,34 @@ Currently Lens Protocol only supports notifications for interactions on the logg
 
 LensParty uses Push Protocol to send notification to people who follow the community.
 
+### Create Community
+
+![create-community-flow](https://user-images.githubusercontent.com/38040789/205459166-0b8b831f-2d95-4f6b-b65f-58935765045d.png)
+
+Users create community via the backend by passing the `accessToken` in order to prove address ownership.
+
+User also sends conditions required in order to post on the community.
+
+Backend creates a community using Lens Protocol and the `followNFTURI` is a Dynamic NFT by Revise.
+
+### Create Post on Community
+
+![create-post-on-community](https://user-images.githubusercontent.com/38040789/205459264-581d345b-2d2f-455a-8560-dfbcc9651990.png)
+
+Users can create posts on Community profiles via the backend.
+
+Users proves address ownership by passing the `accessToken` to the backend.
+
+Backend uses Covalent API to check if the user satisfies the `nftCondition`.
+
+If yes, server creates the requested post on the community, update the Revise Dynamic NFT and send notification via Push to all users are following the community profile on Lens.
+
+### Change Community Metadata
+
+![change-community-metadata](https://user-images.githubusercontent.com/38040789/205459372-47d92042-9bcb-4479-ba19-43ee1dd7ff71.png)
+
+User can also change metadata of the community they created.
+
 ## ⚖️ License
 
 Lenster is open-sourced software licensed under the © [MIT](LICENSE).
