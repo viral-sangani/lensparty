@@ -1037,44 +1037,6 @@ app.get('/hastransactionbeenindexed', async (req, res, next) => {
   res.status(200).json({ data: result });
 });
 
-app.get('/decodejwt', async (req, res, next) => {
-  let { lensToken } = req.query;
-  let decoded = jwt.decode(lensToken);
-
-  res.status(200).json({
-    data: decoded,
-    expired: decoded.exp < Date.now() / 1000
-  });
-});
-
-app.get('/epns', async (req, res, next) => {
-  const channelData = await PushAPI.channels.getChannel({
-    channel: 'eip155:80001:0x22ae7Cf4cD59773f058B685a7e6B7E0984C54966', // channel address in CAIP
-    env: 'staging'
-  });
-
-  res.status(200).json({ data: apiResponse });
-});
-
-app.get('/isFollowing', async (req, res, next) => {
-  let { profileId, whoProfileId } = req.query;
-
-  let response = await axios({
-    url: API_URL,
-    method: 'post',
-    data: {
-      query: isFollowing,
-      variables: {
-        request: { profileId },
-        profileId: whoProfileId
-      }
-    }
-  });
-
-  res.status(200).json({
-    data: response.data.data.profile
-  });
-});
 app.listen(PORT, () => {
   console.log('Listening at port: ', PORT);
   Moralis.start({
