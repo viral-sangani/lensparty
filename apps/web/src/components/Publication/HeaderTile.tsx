@@ -7,6 +7,7 @@ import getAvatar from '@lib/getAvatar';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import type { MetadataAttributeOutput, Profile } from 'lens';
+import Link from 'next/link';
 import type { FC } from 'react';
 import { useState } from 'react';
 
@@ -110,25 +111,27 @@ const HeaderTile: FC<Props> = ({
         followStatusLoading={followStatusLoading}
         showUserPreview={showUserPreview}
       >
-        <div className="flex items-center space-x-3">
-          <UserAvatar />
-          <div className="flex flex-row space-x-2 dark:text-white text-gray-800">
-            {isCommunity ? (
-              <div className="flex flex-row items-center">
-                <span className="mr-0">
-                  <UserName />
-                </span>
+        <Link href={isCommunity ? `/c/${profile.handle}` : `/u/${profile.handle}`}>
+          <div className="flex items-center space-x-3">
+            <UserAvatar />
+            <div className="flex flex-row space-x-2 dark:text-white text-gray-800">
+              {isCommunity ? (
                 <div className="flex flex-row items-center">
-                  <span className="mx-1 text-xs">{' | '}Posted by</span> <MemberName />
+                  <span className="mr-0">
+                    <UserName />
+                  </span>
+                  <div className="flex flex-row items-center">
+                    <span className="mx-1 text-xs">{' | '}Posted by</span> <MemberName />
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <span className="mr-0">
-                <span className="mr-0 text-xs">Posted by</span> <UserName />
-              </span>
-            )}
+              ) : (
+                <span className="mr-0">
+                  <span className="mr-0 text-xs">Posted by</span> <UserName />
+                </span>
+              )}
+            </div>
           </div>
-        </div>
+        </Link>
       </UserPreview>
     );
   };
