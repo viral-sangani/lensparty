@@ -114,3 +114,5 @@ export const LS_KEYS = {
   TIMELINE_STORE: 'timeline.store',
   MESSAGE_STORE: 'message.store'
 };
+
+export const SERVER_WALLET_ADDRESS = '0x22ae7Cf4cD59773f058B685a7e6B7E0984C54966';

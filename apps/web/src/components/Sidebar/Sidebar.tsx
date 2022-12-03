@@ -1,4 +1,4 @@
-import { HandIcon, HomeIcon, PlusCircleIcon, TrendingUpIcon, UserCircleIcon } from '@heroicons/react/outline';
+import { HandIcon, HomeIcon, PlusCircleIcon, UserCircleIcon, UsersIcon } from '@heroicons/react/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -39,10 +39,7 @@ const Sidebar: FC<SidebarProps> = ({ className }) => {
         <HomeIcon className="w-4 h-4 dark:text-gray-200 text-black" />
         <div className="dark:text-gray-200 text-black">Home</div>
       </Menu>
-      <Menu current={pathname == '/popular'} url="/popular">
-        <TrendingUpIcon className="w-4 h-4 dark:text-gray-200 text-black" />
-        <div className="dark:text-gray-200 text-black">Popular</div>
-      </Menu>
+
       {currentProfile && (
         <>
           <Menu current={pathname == '/create-community'} url="/create-community">
@@ -55,6 +52,10 @@ const Sidebar: FC<SidebarProps> = ({ className }) => {
           </Menu>
         </>
       )}
+      <Menu current={pathname == `/communities`} url={`/communities`}>
+        <UsersIcon className="w-4 h-4 dark:text-gray-200 text-black" />
+        <div className="dark:text-gray-200 text-black">Explore Communities</div>
+      </Menu>
       <Menu current={pathname == '/report-bug'} url="/report-bug">
         <HandIcon className="w-4 h-4 dark:text-gray-200 text-black" />
         <div className="dark:text-gray-200 text-black">Repor Bug</div>
