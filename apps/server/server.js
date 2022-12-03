@@ -1020,11 +1020,11 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
       identityType: 2, // direct payload
       notification: {
         title: `${posterProfile.handle} posted in ${profile.handle}`,
-        body: `about optimizations on LensTube, how well the videos load for you?`
+        body: `${posterProfile.handle} posted in ${profile.handle}`
       },
       payload: {
         title: `${posterProfile.handle} posted in ${profile.handle}`,
-        body: `about optimizations on LensTube, how well the videos load for you?`,
+        body: `${posterProfile.handle} posted in ${profile.handle}`,
         cta: '',
         img: ''
       },
