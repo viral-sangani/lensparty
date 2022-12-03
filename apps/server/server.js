@@ -960,11 +960,14 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
           request: {
             profileId: profile.id,
             contentURI,
-            collectModule: {
-              freeCollectModule: {
-                followerOnly: false
-              }
-            },
+            collectModule:
+              collectModule !== undefined
+                ? collectModule
+                : {
+                    freeCollectModule: {
+                      followerOnly: false
+                    }
+                  },
             referenceModule: {
               followerOnlyReferenceModule: true
             }
