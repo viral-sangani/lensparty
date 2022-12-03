@@ -1,3 +1,4 @@
+import CreatePostForm from '@components/CreatePost/CreatePostForm';
 import { Card } from '@components/UI/Card';
 import { Modal } from '@components/UI/Modal';
 import { Tooltip } from '@components/UI/Tooltip';
@@ -8,8 +9,6 @@ import type { FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { useAppStore } from 'src/store/app';
 import { usePublicationStore } from 'src/store/publication';
-
-import NewPublication from '../NewPublication';
 
 type Action = 'update' | 'image' | 'video' | 'audio' | 'article';
 
@@ -84,7 +83,7 @@ const NewPost: FC = () => {
         </div>
       </button>
       <Modal title="Create post" size="md" show={showNewPostModal} onClose={() => setShowNewPostModal(false)}>
-        {selectedAction === 'update' && <NewPublication />}
+        {selectedAction === 'update' && <CreatePostForm />}
       </Modal>
     </Card>
   );

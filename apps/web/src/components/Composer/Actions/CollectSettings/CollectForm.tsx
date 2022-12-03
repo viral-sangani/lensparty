@@ -19,9 +19,10 @@ import { useCollectModuleStore } from 'src/store/collect-module';
 
 interface Props {
   setShowModal: Dispatch<boolean>;
+  forCommunity?: boolean;
 }
 
-const CollectForm: FC<Props> = ({ setShowModal }) => {
+const CollectForm: FC<Props> = ({ setShowModal, forCommunity = false }) => {
   const currentProfile = useAppStore((state) => state.currentProfile);
   const selectedCollectModule = useCollectModuleStore((state) => state.selectedCollectModule);
   const setSelectedCollectModule = useCollectModuleStore((state) => state.setSelectedCollectModule);
@@ -283,7 +284,13 @@ const CollectForm: FC<Props> = ({ setShowModal }) => {
         >
           Cancel
         </Button>
-        <Button onClick={() => setShowModal(false)}>Save</Button>
+        <Button
+          onClick={() => {
+            setShowModal(false);
+          }}
+        >
+          Save
+        </Button>
       </div>
     </div>
   );
