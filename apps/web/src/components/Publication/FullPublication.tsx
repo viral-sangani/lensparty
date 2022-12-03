@@ -33,19 +33,30 @@ const FullPublication: FC<Props> = ({ publication }) => {
     ? publication?.mirrorOf?.stats?.totalAmountOfCollects
     : publication?.stats?.totalAmountOfCollects;
   const showStats = mirrorCount > 0 || reactionCount > 0 || collectCount > 0;
+  const profileAttributes = publication.profile.attributes;
+  let isCommunity =
+    profileAttributes &&
+    profileAttributes?.filter((attribute) => {
+      return attribute.key === 'profileType' && attribute.value === 'community';
+    }).length > 0;
+
+  const { attributes } = publication.metadata;
 
   return (
-    <article className="p-5">
+    <article className="px-5 pt-5 pb-2">
       <PublicationType publication={publication} showType />
       <div>
         <div className="flex justify-between pb-4 space-x-1.5">
           <HeaderTile
             timestamp={publication.createdAt}
+            isCommunity={isCommunity ?? false}
+            attributes={attributes}
             profile={profile ?? publication?.collectedBy?.defaultProfile}
             isSmall={true}
+            showStatus
           />
         </div>
-        <div className="ml-[53px]">
+        <div className="">
           {publication?.hidden ? (
             <HiddenPublication type={publication.__typename} />
           ) : (
@@ -61,7 +72,7 @@ const FullPublication: FC<Props> = ({ publication }) => {
                   <PublicationStats publication={publication} />
                 </>
               )}
-              <div className="divider" />
+
               <PublicationActions publication={publication} isFullPublication />
             </>
           )}

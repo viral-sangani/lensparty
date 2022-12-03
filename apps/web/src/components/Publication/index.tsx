@@ -55,7 +55,7 @@ const ViewPublication: NextPage = () => {
 
   return (
     <div className="dark:bg-gray-900 bg-white">
-      <GridLayout className="lg:mx-20 md:mx-10 mx-0 mt-8">
+      <GridLayout className="lg:mx-20 md:mx-10 mx-0">
         <MetaTags
           title={
             publication.__typename && publication?.profile?.handle
@@ -66,7 +66,7 @@ const ViewPublication: NextPage = () => {
         <GridItemThree>
           <Sidebar className="hidden md:block" />
         </GridItemThree>
-        <GridItemNine>
+        <GridItemNine className="mt-8">
           <GridLayout>
             <GridItemEight className="space-y-5">
               <Card>

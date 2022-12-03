@@ -3934,6 +3934,7 @@ export type CommentFieldsFragment = {
   stats: {
     __typename?: 'PublicationStats';
     totalUpvotes: number;
+    totalDownvotes: number;
     totalAmountOfMirrors: number;
     totalAmountOfCollects: number;
     totalAmountOfComments: number;
@@ -4073,6 +4074,7 @@ export type CommentFieldsFragment = {
         stats: {
           __typename?: 'PublicationStats';
           totalUpvotes: number;
+          totalDownvotes: number;
           totalAmountOfMirrors: number;
           totalAmountOfCollects: number;
           totalAmountOfComments: number;
@@ -4172,6 +4174,7 @@ export type CommentFieldsFragment = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -4226,6 +4229,7 @@ export type CommentFieldsFragment = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -4356,6 +4360,7 @@ export type CommentFieldsFragment = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -4503,6 +4508,7 @@ export type CommentFieldsFragment = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -4620,6 +4626,7 @@ export type CommentFieldsFragment = {
         stats: {
           __typename?: 'PublicationStats';
           totalUpvotes: number;
+          totalDownvotes: number;
           totalAmountOfMirrors: number;
           totalAmountOfCollects: number;
           totalAmountOfComments: number;
@@ -4674,6 +4681,7 @@ export type CommentFieldsFragment = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -4800,6 +4808,7 @@ export type CommentFieldsFragment = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -4944,6 +4953,7 @@ export type CommentFieldsFragment = {
         stats: {
           __typename?: 'PublicationStats';
           totalUpvotes: number;
+          totalDownvotes: number;
           totalAmountOfMirrors: number;
           totalAmountOfCollects: number;
           totalAmountOfComments: number;
@@ -5081,6 +5091,7 @@ export type MirrorFieldsFragment = {
   stats: {
     __typename?: 'PublicationStats';
     totalUpvotes: number;
+    totalDownvotes: number;
     totalAmountOfMirrors: number;
     totalAmountOfCollects: number;
     totalAmountOfComments: number;
@@ -5135,6 +5146,7 @@ export type MirrorFieldsFragment = {
         stats: {
           __typename?: 'PublicationStats';
           totalUpvotes: number;
+          totalDownvotes: number;
           totalAmountOfMirrors: number;
           totalAmountOfCollects: number;
           totalAmountOfComments: number;
@@ -5261,6 +5273,7 @@ export type MirrorFieldsFragment = {
         stats: {
           __typename?: 'PublicationStats';
           totalUpvotes: number;
+          totalDownvotes: number;
           totalAmountOfMirrors: number;
           totalAmountOfCollects: number;
           totalAmountOfComments: number;
@@ -5406,6 +5419,7 @@ export type PostFieldsFragment = {
   stats: {
     __typename?: 'PublicationStats';
     totalUpvotes: number;
+    totalDownvotes: number;
     totalAmountOfMirrors: number;
     totalAmountOfCollects: number;
     totalAmountOfComments: number;
@@ -5462,6 +5476,7 @@ export type RelayerResultFieldsFragment =
 export type StatsFieldsFragment = {
   __typename?: 'PublicationStats';
   totalUpvotes: number;
+  totalDownvotes: number;
   totalAmountOfMirrors: number;
   totalAmountOfCollects: number;
   totalAmountOfComments: number;
@@ -6428,6 +6443,7 @@ export type CommentFeedQuery = {
           stats: {
             __typename?: 'PublicationStats';
             totalUpvotes: number;
+            totalDownvotes: number;
             totalAmountOfMirrors: number;
             totalAmountOfCollects: number;
             totalAmountOfComments: number;
@@ -6567,6 +6583,7 @@ export type CommentFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -6670,6 +6687,7 @@ export type CommentFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -6735,6 +6753,7 @@ export type CommentFeedQuery = {
                             stats: {
                               __typename?: 'PublicationStats';
                               totalUpvotes: number;
+                              totalDownvotes: number;
                               totalAmountOfMirrors: number;
                               totalAmountOfCollects: number;
                               totalAmountOfComments: number;
@@ -6897,6 +6916,7 @@ export type CommentFeedQuery = {
                             stats: {
                               __typename?: 'PublicationStats';
                               totalUpvotes: number;
+                              totalDownvotes: number;
                               totalAmountOfMirrors: number;
                               totalAmountOfCollects: number;
                               totalAmountOfComments: number;
@@ -7052,6 +7072,7 @@ export type CommentFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -7172,6 +7193,7 @@ export type CommentFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -7230,6 +7252,7 @@ export type CommentFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -7364,6 +7387,7 @@ export type CommentFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -7511,6 +7535,7 @@ export type CommentFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -7728,6 +7753,7 @@ export type ExploreFeedQuery = {
           stats: {
             __typename?: 'PublicationStats';
             totalUpvotes: number;
+            totalDownvotes: number;
             totalAmountOfMirrors: number;
             totalAmountOfCollects: number;
             totalAmountOfComments: number;
@@ -7867,6 +7893,7 @@ export type ExploreFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -7970,6 +7997,7 @@ export type ExploreFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -8035,6 +8063,7 @@ export type ExploreFeedQuery = {
                             stats: {
                               __typename?: 'PublicationStats';
                               totalUpvotes: number;
+                              totalDownvotes: number;
                               totalAmountOfMirrors: number;
                               totalAmountOfCollects: number;
                               totalAmountOfComments: number;
@@ -8197,6 +8226,7 @@ export type ExploreFeedQuery = {
                             stats: {
                               __typename?: 'PublicationStats';
                               totalUpvotes: number;
+                              totalDownvotes: number;
                               totalAmountOfMirrors: number;
                               totalAmountOfCollects: number;
                               totalAmountOfComments: number;
@@ -8352,6 +8382,7 @@ export type ExploreFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -8472,6 +8503,7 @@ export type ExploreFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -8530,6 +8562,7 @@ export type ExploreFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -8664,6 +8697,7 @@ export type ExploreFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -8811,6 +8845,7 @@ export type ExploreFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -8929,6 +8964,7 @@ export type ExploreFeedQuery = {
           stats: {
             __typename?: 'PublicationStats';
             totalUpvotes: number;
+            totalDownvotes: number;
             totalAmountOfMirrors: number;
             totalAmountOfCollects: number;
             totalAmountOfComments: number;
@@ -8983,6 +9019,7 @@ export type ExploreFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -9109,6 +9146,7 @@ export type ExploreFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -9253,6 +9291,7 @@ export type ExploreFeedQuery = {
           stats: {
             __typename?: 'PublicationStats';
             totalUpvotes: number;
+            totalDownvotes: number;
             totalAmountOfMirrors: number;
             totalAmountOfCollects: number;
             totalAmountOfComments: number;
@@ -9412,6 +9451,7 @@ export type FeedHighlightsQuery = {
           stats: {
             __typename?: 'PublicationStats';
             totalUpvotes: number;
+            totalDownvotes: number;
             totalAmountOfMirrors: number;
             totalAmountOfCollects: number;
             totalAmountOfComments: number;
@@ -9551,6 +9591,7 @@ export type FeedHighlightsQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -9654,6 +9695,7 @@ export type FeedHighlightsQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -9719,6 +9761,7 @@ export type FeedHighlightsQuery = {
                             stats: {
                               __typename?: 'PublicationStats';
                               totalUpvotes: number;
+                              totalDownvotes: number;
                               totalAmountOfMirrors: number;
                               totalAmountOfCollects: number;
                               totalAmountOfComments: number;
@@ -9881,6 +9924,7 @@ export type FeedHighlightsQuery = {
                             stats: {
                               __typename?: 'PublicationStats';
                               totalUpvotes: number;
+                              totalDownvotes: number;
                               totalAmountOfMirrors: number;
                               totalAmountOfCollects: number;
                               totalAmountOfComments: number;
@@ -10036,6 +10080,7 @@ export type FeedHighlightsQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -10156,6 +10201,7 @@ export type FeedHighlightsQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -10214,6 +10260,7 @@ export type FeedHighlightsQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -10348,6 +10395,7 @@ export type FeedHighlightsQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -10495,6 +10543,7 @@ export type FeedHighlightsQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -10613,6 +10662,7 @@ export type FeedHighlightsQuery = {
           stats: {
             __typename?: 'PublicationStats';
             totalUpvotes: number;
+            totalDownvotes: number;
             totalAmountOfMirrors: number;
             totalAmountOfCollects: number;
             totalAmountOfComments: number;
@@ -10667,6 +10717,7 @@ export type FeedHighlightsQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -10793,6 +10844,7 @@ export type FeedHighlightsQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -10937,6 +10989,7 @@ export type FeedHighlightsQuery = {
           stats: {
             __typename?: 'PublicationStats';
             totalUpvotes: number;
+            totalDownvotes: number;
             totalAmountOfMirrors: number;
             totalAmountOfCollects: number;
             totalAmountOfComments: number;
@@ -11838,6 +11891,7 @@ export type ProfileFeedQuery = {
           stats: {
             __typename?: 'PublicationStats';
             totalUpvotes: number;
+            totalDownvotes: number;
             totalAmountOfMirrors: number;
             totalAmountOfCollects: number;
             totalAmountOfComments: number;
@@ -11977,6 +12031,7 @@ export type ProfileFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -12080,6 +12135,7 @@ export type ProfileFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -12145,6 +12201,7 @@ export type ProfileFeedQuery = {
                             stats: {
                               __typename?: 'PublicationStats';
                               totalUpvotes: number;
+                              totalDownvotes: number;
                               totalAmountOfMirrors: number;
                               totalAmountOfCollects: number;
                               totalAmountOfComments: number;
@@ -12307,6 +12364,7 @@ export type ProfileFeedQuery = {
                             stats: {
                               __typename?: 'PublicationStats';
                               totalUpvotes: number;
+                              totalDownvotes: number;
                               totalAmountOfMirrors: number;
                               totalAmountOfCollects: number;
                               totalAmountOfComments: number;
@@ -12462,6 +12520,7 @@ export type ProfileFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -12582,6 +12641,7 @@ export type ProfileFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -12640,6 +12700,7 @@ export type ProfileFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -12774,6 +12835,7 @@ export type ProfileFeedQuery = {
                       stats: {
                         __typename?: 'PublicationStats';
                         totalUpvotes: number;
+                        totalDownvotes: number;
                         totalAmountOfMirrors: number;
                         totalAmountOfCollects: number;
                         totalAmountOfComments: number;
@@ -12921,6 +12983,7 @@ export type ProfileFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -13039,6 +13102,7 @@ export type ProfileFeedQuery = {
           stats: {
             __typename?: 'PublicationStats';
             totalUpvotes: number;
+            totalDownvotes: number;
             totalAmountOfMirrors: number;
             totalAmountOfCollects: number;
             totalAmountOfComments: number;
@@ -13093,6 +13157,7 @@ export type ProfileFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -13219,6 +13284,7 @@ export type ProfileFeedQuery = {
                 stats: {
                   __typename?: 'PublicationStats';
                   totalUpvotes: number;
+                  totalDownvotes: number;
                   totalAmountOfMirrors: number;
                   totalAmountOfCollects: number;
                   totalAmountOfComments: number;
@@ -13363,6 +13429,7 @@ export type ProfileFeedQuery = {
           stats: {
             __typename?: 'PublicationStats';
             totalUpvotes: number;
+            totalDownvotes: number;
             totalAmountOfMirrors: number;
             totalAmountOfCollects: number;
             totalAmountOfComments: number;
@@ -13588,6 +13655,7 @@ export type PublicationQuery = {
         stats: {
           __typename?: 'PublicationStats';
           totalUpvotes: number;
+          totalDownvotes: number;
           totalAmountOfMirrors: number;
           totalAmountOfCollects: number;
           totalAmountOfComments: number;
@@ -13727,6 +13795,7 @@ export type PublicationQuery = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -13826,6 +13895,7 @@ export type PublicationQuery = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -13891,6 +13961,7 @@ export type PublicationQuery = {
                           stats: {
                             __typename?: 'PublicationStats';
                             totalUpvotes: number;
+                            totalDownvotes: number;
                             totalAmountOfMirrors: number;
                             totalAmountOfCollects: number;
                             totalAmountOfComments: number;
@@ -14053,6 +14124,7 @@ export type PublicationQuery = {
                           stats: {
                             __typename?: 'PublicationStats';
                             totalUpvotes: number;
+                            totalDownvotes: number;
                             totalAmountOfMirrors: number;
                             totalAmountOfCollects: number;
                             totalAmountOfComments: number;
@@ -14204,6 +14276,7 @@ export type PublicationQuery = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -14324,6 +14397,7 @@ export type PublicationQuery = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -14378,6 +14452,7 @@ export type PublicationQuery = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -14508,6 +14583,7 @@ export type PublicationQuery = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -14655,6 +14731,7 @@ export type PublicationQuery = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -14780,6 +14857,7 @@ export type PublicationQuery = {
         stats: {
           __typename?: 'PublicationStats';
           totalUpvotes: number;
+          totalDownvotes: number;
           totalAmountOfMirrors: number;
           totalAmountOfCollects: number;
           totalAmountOfComments: number;
@@ -14834,6 +14912,7 @@ export type PublicationQuery = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -14960,6 +15039,7 @@ export type PublicationQuery = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -15111,6 +15191,7 @@ export type PublicationQuery = {
         stats: {
           __typename?: 'PublicationStats';
           totalUpvotes: number;
+          totalDownvotes: number;
           totalAmountOfMirrors: number;
           totalAmountOfCollects: number;
           totalAmountOfComments: number;
@@ -15378,6 +15459,7 @@ export type SearchPublicationsQuery = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -15520,6 +15602,7 @@ export type SearchPublicationsQuery = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -15647,6 +15730,7 @@ export type SearchPublicationsQuery = {
                           stats: {
                             __typename?: 'PublicationStats';
                             totalUpvotes: number;
+                            totalDownvotes: number;
                             totalAmountOfMirrors: number;
                             totalAmountOfCollects: number;
                             totalAmountOfComments: number;
@@ -15715,6 +15799,7 @@ export type SearchPublicationsQuery = {
                                 stats: {
                                   __typename?: 'PublicationStats';
                                   totalUpvotes: number;
+                                  totalDownvotes: number;
                                   totalAmountOfMirrors: number;
                                   totalAmountOfCollects: number;
                                   totalAmountOfComments: number;
@@ -15883,6 +15968,7 @@ export type SearchPublicationsQuery = {
                                 stats: {
                                   __typename?: 'PublicationStats';
                                   totalUpvotes: number;
+                                  totalDownvotes: number;
                                   totalAmountOfMirrors: number;
                                   totalAmountOfCollects: number;
                                   totalAmountOfComments: number;
@@ -16066,6 +16152,7 @@ export type SearchPublicationsQuery = {
                           stats: {
                             __typename?: 'PublicationStats';
                             totalUpvotes: number;
+                            totalDownvotes: number;
                             totalAmountOfMirrors: number;
                             totalAmountOfCollects: number;
                             totalAmountOfComments: number;
@@ -16186,6 +16273,7 @@ export type SearchPublicationsQuery = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -16251,6 +16339,7 @@ export type SearchPublicationsQuery = {
                           stats: {
                             __typename?: 'PublicationStats';
                             totalUpvotes: number;
+                            totalDownvotes: number;
                             totalAmountOfMirrors: number;
                             totalAmountOfCollects: number;
                             totalAmountOfComments: number;
@@ -16413,6 +16502,7 @@ export type SearchPublicationsQuery = {
                           stats: {
                             __typename?: 'PublicationStats';
                             totalUpvotes: number;
+                            totalDownvotes: number;
                             totalAmountOfMirrors: number;
                             totalAmountOfCollects: number;
                             totalAmountOfComments: number;
@@ -16564,6 +16654,7 @@ export type SearchPublicationsQuery = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -16712,6 +16803,7 @@ export type SearchPublicationsQuery = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -17082,6 +17174,7 @@ export type TimelineQuery = {
             stats: {
               __typename?: 'PublicationStats';
               totalUpvotes: number;
+              totalDownvotes: number;
               totalAmountOfMirrors: number;
               totalAmountOfCollects: number;
               totalAmountOfComments: number;
@@ -17221,6 +17314,7 @@ export type TimelineQuery = {
                   stats: {
                     __typename?: 'PublicationStats';
                     totalUpvotes: number;
+                    totalDownvotes: number;
                     totalAmountOfMirrors: number;
                     totalAmountOfCollects: number;
                     totalAmountOfComments: number;
@@ -17344,6 +17438,7 @@ export type TimelineQuery = {
                         stats: {
                           __typename?: 'PublicationStats';
                           totalUpvotes: number;
+                          totalDownvotes: number;
                           totalAmountOfMirrors: number;
                           totalAmountOfCollects: number;
                           totalAmountOfComments: number;
@@ -17409,6 +17504,7 @@ export type TimelineQuery = {
                               stats: {
                                 __typename?: 'PublicationStats';
                                 totalUpvotes: number;
+                                totalDownvotes: number;
                                 totalAmountOfMirrors: number;
                                 totalAmountOfCollects: number;
                                 totalAmountOfComments: number;
@@ -17574,6 +17670,7 @@ export type TimelineQuery = {
                               stats: {
                                 __typename?: 'PublicationStats';
                                 totalUpvotes: number;
+                                totalDownvotes: number;
                                 totalAmountOfMirrors: number;
                                 totalAmountOfCollects: number;
                                 totalAmountOfComments: number;
@@ -17753,6 +17850,7 @@ export type TimelineQuery = {
                         stats: {
                           __typename?: 'PublicationStats';
                           totalUpvotes: number;
+                          totalDownvotes: number;
                           totalAmountOfMirrors: number;
                           totalAmountOfCollects: number;
                           totalAmountOfComments: number;
@@ -17873,6 +17971,7 @@ export type TimelineQuery = {
                   stats: {
                     __typename?: 'PublicationStats';
                     totalUpvotes: number;
+                    totalDownvotes: number;
                     totalAmountOfMirrors: number;
                     totalAmountOfCollects: number;
                     totalAmountOfComments: number;
@@ -17931,6 +18030,7 @@ export type TimelineQuery = {
                         stats: {
                           __typename?: 'PublicationStats';
                           totalUpvotes: number;
+                          totalDownvotes: number;
                           totalAmountOfMirrors: number;
                           totalAmountOfCollects: number;
                           totalAmountOfComments: number;
@@ -18089,6 +18189,7 @@ export type TimelineQuery = {
                         stats: {
                           __typename?: 'PublicationStats';
                           totalUpvotes: number;
+                          totalDownvotes: number;
                           totalAmountOfMirrors: number;
                           totalAmountOfCollects: number;
                           totalAmountOfComments: number;
@@ -18236,6 +18337,7 @@ export type TimelineQuery = {
                   stats: {
                     __typename?: 'PublicationStats';
                     totalUpvotes: number;
+                    totalDownvotes: number;
                     totalAmountOfMirrors: number;
                     totalAmountOfCollects: number;
                     totalAmountOfComments: number;
@@ -18381,6 +18483,7 @@ export type TimelineQuery = {
             stats: {
               __typename?: 'PublicationStats';
               totalUpvotes: number;
+              totalDownvotes: number;
               totalAmountOfMirrors: number;
               totalAmountOfCollects: number;
               totalAmountOfComments: number;
@@ -18626,6 +18729,7 @@ export type TimelineQuery = {
         stats: {
           __typename?: 'PublicationStats';
           totalUpvotes: number;
+          totalDownvotes: number;
           totalAmountOfMirrors: number;
           totalAmountOfCollects: number;
           totalAmountOfComments: number;
@@ -18765,6 +18869,7 @@ export type TimelineQuery = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -18864,6 +18969,7 @@ export type TimelineQuery = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -18929,6 +19035,7 @@ export type TimelineQuery = {
                           stats: {
                             __typename?: 'PublicationStats';
                             totalUpvotes: number;
+                            totalDownvotes: number;
                             totalAmountOfMirrors: number;
                             totalAmountOfCollects: number;
                             totalAmountOfComments: number;
@@ -19091,6 +19198,7 @@ export type TimelineQuery = {
                           stats: {
                             __typename?: 'PublicationStats';
                             totalUpvotes: number;
+                            totalDownvotes: number;
                             totalAmountOfMirrors: number;
                             totalAmountOfCollects: number;
                             totalAmountOfComments: number;
@@ -19242,6 +19350,7 @@ export type TimelineQuery = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -19362,6 +19471,7 @@ export type TimelineQuery = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -19416,6 +19526,7 @@ export type TimelineQuery = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -19546,6 +19657,7 @@ export type TimelineQuery = {
                     stats: {
                       __typename?: 'PublicationStats';
                       totalUpvotes: number;
+                      totalDownvotes: number;
                       totalAmountOfMirrors: number;
                       totalAmountOfCollects: number;
                       totalAmountOfComments: number;
@@ -19693,6 +19805,7 @@ export type TimelineQuery = {
               stats: {
                 __typename?: 'PublicationStats';
                 totalUpvotes: number;
+                totalDownvotes: number;
                 totalAmountOfMirrors: number;
                 totalAmountOfCollects: number;
                 totalAmountOfComments: number;
@@ -19924,6 +20037,7 @@ export const CollectModuleFieldsFragmentDoc = gql`
 export const StatsFieldsFragmentDoc = gql`
   fragment StatsFields on PublicationStats {
     totalUpvotes
+    totalDownvotes
     totalAmountOfMirrors
     totalAmountOfCollects
     totalAmountOfComments

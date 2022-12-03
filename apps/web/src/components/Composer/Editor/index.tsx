@@ -16,14 +16,24 @@ import MentionsPlugin from '../../Shared/Lexical/Plugins/AtMentionsPlugin';
 
 const TRANSFORMERS = [...TEXT_FORMAT_TRANSFORMERS];
 
-const Editor: FC = () => {
+type Props = {
+  showLargeTextArea?: boolean;
+};
+
+const Editor: FC<Props> = ({ showLargeTextArea = true }) => {
   const setPublicationContent = usePublicationStore((state) => state.setPublicationContent);
 
   return (
     <div className="relative">
       <ToolbarPlugin />
       <RichTextPlugin
-        contentEditable={<ContentEditable className="px-5 block my-4 min-h-[150px] overflow-auto" />}
+        contentEditable={
+          <ContentEditable
+            className={`px-5 block my-4 ${
+              showLargeTextArea ? 'min-h-[150px]' : 'min-h-[80px]'
+            } overflow-auto`}
+          />
+        }
         placeholder={
           <div className="px-5 absolute top-[65px] text-gray-400 pointer-events-none whitespace-nowrap">
             What's up?

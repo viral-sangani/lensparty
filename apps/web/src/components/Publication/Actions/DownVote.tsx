@@ -8,9 +8,9 @@ import { motion } from 'framer-motion';
 import { ReactionTypes, useAddReactionMutation, useRemoveReactionMutation } from 'lens';
 import { useRouter } from 'next/router';
 import type { FC } from 'react';
-import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useAppStore } from 'src/store/app';
+import { useReactionStore } from 'src/store/reactionStore';
 
 interface Props {
   publication: LensPublication;
@@ -21,13 +21,15 @@ const DownVote: FC<Props> = ({ publication }) => {
   const { pathname } = useRouter();
   const isMirror = publication.__typename === 'Mirror';
   const currentProfile = useAppStore((state) => state.currentProfile);
-  const [downvoted, setDownvoted] = useState(
-    (isMirror ? publication?.mirrorOf?.reaction : publication?.reaction) === 'UPVOTE'
-  );
-  console.log('publication?.stats?.totalDownvotes', publication?.stats);
-  const [count, setCount] = useState(
-    isMirror ? publication?.mirrorOf?.stats?.totalDownvotes : publication?.stats?.totalDownvotes
-  );
+
+  const hasUpVoted = useReactionStore((state) => state.hasUpVoted);
+  const hasDownVoted = useReactionStore((state) => state.hasDownVoted);
+  const totalUpVotes = useReactionStore((state) => state.totalUpVotes);
+  const totalDownVotes = useReactionStore((state) => state.totalDownVotes);
+  const setHasUpVoted = useReactionStore((state) => state.setHasUpVoted);
+  const setHasDownVoted = useReactionStore((state) => state.setHasDownVoted);
+  const setTotalUpVotes = useReactionStore((state) => state.setTotalUpVotes);
+  const setTotalDownVotes = useReactionStore((state) => state.setTotalDownVotes);
 
   const updateCache = (cache: ApolloCache<any>, type: ReactionTypes.Upvote | ReactionTypes.Downvote) => {
     if (pathname === '/posts/[id]') {
@@ -46,18 +48,18 @@ const DownVote: FC<Props> = ({ publication }) => {
   const [addReaction] = useAddReactionMutation({
     onCompleted: () => {},
     onError: (error) => {
-      setDownvoted(!downvoted);
-      setCount(count - 1);
+      setHasDownVoted(!hasDownVoted);
+      setTotalDownVotes(totalDownVotes + 1);
       onError(error);
     },
-    update: (cache) => updateCache(cache, ReactionTypes.Upvote)
+    update: (cache) => updateCache(cache, ReactionTypes.Downvote)
   });
 
   const [removeReaction] = useRemoveReactionMutation({
     onCompleted: () => {},
     onError: (error) => {
-      setDownvoted(!downvoted);
-      setCount(count + 1);
+      setHasDownVoted(!hasDownVoted);
+      setTotalDownVotes(totalDownVotes - 1);
       onError(error);
     },
     update: (cache) => updateCache(cache, ReactionTypes.Downvote)
@@ -68,7 +70,7 @@ const DownVote: FC<Props> = ({ publication }) => {
       return toast.error(SIGN_WALLET);
     }
 
-    const variable = {
+    const upVoteVariable = {
       variables: {
         request: {
           profileId: currentProfile?.id,
@@ -78,14 +80,32 @@ const DownVote: FC<Props> = ({ publication }) => {
       }
     };
 
-    if (downvoted) {
-      setDownvoted(false);
-      setCount(count - 1);
-      removeReaction(variable);
+    const downVoteVariable = {
+      variables: {
+        request: {
+          profileId: currentProfile?.id,
+          reaction: ReactionTypes.Downvote,
+          publicationId: publication.__typename === 'Mirror' ? publication?.mirrorOf?.id : publication?.id
+        }
+      }
+    };
+
+    if (hasDownVoted) {
+      setHasDownVoted(!hasDownVoted);
+      setTotalDownVotes(totalDownVotes - 1);
+      removeReaction(downVoteVariable);
+    } else if (hasUpVoted) {
+      setHasUpVoted(!hasUpVoted);
+      setTotalUpVotes(totalUpVotes - 1);
+      removeReaction(upVoteVariable);
+
+      setHasDownVoted(!hasDownVoted);
+      setTotalDownVotes(totalDownVotes + 1);
+      addReaction(downVoteVariable);
     } else {
-      setDownvoted(true);
-      setCount(count + 1);
-      addReaction(variable);
+      setHasDownVoted(!hasDownVoted);
+      setTotalDownVotes(totalDownVotes + 1);
+      addReaction(downVoteVariable);
     }
   };
 
@@ -93,15 +113,15 @@ const DownVote: FC<Props> = ({ publication }) => {
     <motion.button whileTap={{ scale: 0.9 }} onClick={createDownvote} aria-label="DownVote">
       <span
         className={`flex items-center space-x-2 dark:text-gray-400 text-gray-500 hover:bg-blue-300 hover:bg-opacity-20 px-2 py-1 rounded-xl ${
-          downvoted ? 'text-red-600' : 'text-gray-500'
+          hasDownVoted ? 'text-red-600' : 'text-gray-500'
         }`}
       >
         <span className="">
           <span className="">
-            <ArrowSmDownIcon className={`w-7 h-7 ${downvoted ? 'text-red-500' : 'text-gray-500'}`} />
+            <ArrowSmDownIcon className={`w-7 h-7 ${hasDownVoted ? 'text-red-500' : 'text-gray-500'}`} />
           </span>
         </span>
-        <span className="text-[11px] sm:text-sm">{count}</span>
+        <span className="text-[11px] sm:text-sm">{totalDownVotes}</span>
       </span>
     </motion.button>
   );
