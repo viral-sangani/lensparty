@@ -91,8 +91,8 @@ const QueuedPublication: FC<Props> = ({ txn }) => {
   });
 
   return (
-    <article className="p-5">
-      <div className="pb-4 flex items-start justify-between">
+    <article className="p-5 border-2 border-gray-200 dark:border-gray-800 rounded-xl mb-4">
+      <div className="pb-4 flex items-start justify-between ">
         <HeaderTile profile={currentProfile as Profile} isSmall />
         <Tooltip content="Indexing" placement="top">
           <div className="bg-brand-200 rounded-full h-4 w-4 flex items-center justify-center">

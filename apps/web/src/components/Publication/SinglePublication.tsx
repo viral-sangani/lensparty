@@ -48,7 +48,7 @@ const SinglePublication: FC<Props> = ({
     ? publication?.mirrorOf?.profile
     : publication?.profile;
 
-  const attributes = publication.metadata.attributes;
+  const { attributes } = publication.metadata;
 
   const timestamp = feedItem
     ? rootPublication.createdAt
@@ -78,15 +78,18 @@ const SinglePublication: FC<Props> = ({
       <div
         className=""
         // className="ml-[53px]"
-        onClick={() => {
-          push(`/posts/${rootPublication?.id}`);
-        }}
       >
         {publication?.hidden ? (
           <HiddenPublication type={publication.__typename} />
         ) : (
           <>
-            <PublicationBody publication={rootPublication as LensPublication} />
+            <div
+              onClick={() => {
+                push(`/posts/${rootPublication?.id}`);
+              }}
+            >
+              <PublicationBody publication={rootPublication as LensPublication} />
+            </div>
             {showActions && (
               <PublicationActions
                 publication={rootPublication as LensPublication}

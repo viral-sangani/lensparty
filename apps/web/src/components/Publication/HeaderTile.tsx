@@ -24,7 +24,7 @@ interface Props {
   showStatus?: boolean;
   showUserPreview?: boolean;
   timestamp?: string | number | Date;
-  attributes: MetadataAttributeOutput[];
+  attributes?: MetadataAttributeOutput[];
 }
 
 const HeaderTile: FC<Props> = ({
@@ -63,7 +63,7 @@ const HeaderTile: FC<Props> = ({
 
   const UserName = () => (
     <>
-      <Slug gradient={false} className="text-sm" slug={profile?.handle} prefix="l/" />
+      <Slug gradient={false} className="text-sm" slug={profile?.handle} prefix="c/" />
       {showStatus && hasStatus ? (
         <div className="flex items-center text-gray-500">
           <span className="mx-1.5">·</span>
@@ -78,15 +78,13 @@ const HeaderTile: FC<Props> = ({
 
   const MemberName = () => {
     if (isCommunity) {
-      let handleMetadata = attributes.filter((attribute) => {
+      let handleMetadata = attributes.find((attribute) => {
         return attribute.traitType === 'postedByHandle';
-      })[0] as MetadataAttributeOutput;
-
-      console.log(handleMetadata);
+      }) as MetadataAttributeOutput;
       if (handleMetadata) {
         return (
           <>
-            <Slug gradient={false} className="text-sm" slug={handleMetadata.value as string} prefix="m/" />
+            <Slug gradient={false} className="text-sm" slug={handleMetadata.value as string} prefix="u/" />
             {showStatus && hasStatus ? (
               <div className="flex items-center text-gray-500">
                 <span className="mx-1.5">·</span>
@@ -98,7 +96,9 @@ const HeaderTile: FC<Props> = ({
             ) : null}
           </>
         );
-      } else return null;
+      } else {
+        return null;
+      }
     } else {
       return null;
     }
@@ -124,7 +124,7 @@ const HeaderTile: FC<Props> = ({
               </>
             ) : (
               <span className="mr-0 text-sm">
-                <UserName />
+                <span className="mr-0 text-sm">Posted by</span> <UserName />
               </span>
             )}
             {showBio && profile?.bio && (

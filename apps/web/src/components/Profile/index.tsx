@@ -14,6 +14,7 @@ import { useState } from 'react';
 import Custom404 from 'src/pages/404';
 import Custom500 from 'src/pages/500';
 import { useAppStore } from 'src/store/app';
+import { useCreatePostFormStore } from 'src/store/create-post-form';
 import { useProfileTabStore } from 'src/store/profile-tab';
 import type { ProfileType } from 'src/store/profile-type';
 import { useProfileTypeStore } from 'src/store/profile-type';
@@ -33,7 +34,9 @@ type Props = {
 
 const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
   const setProfileType = useProfileTypeStore((state) => state.setProfileType);
-  const [showNewPostModal, setShowNewPostModal] = useState(false);
+  const openModal = useCreatePostFormStore((state) => state.openModal);
+  const setOpenModal = useCreatePostFormStore((state) => state.setOpenModal);
+  const setProfile = useCreatePostFormStore((state) => state.setProfile);
 
   const {
     query: { username, type }
@@ -63,7 +66,7 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
   if (!data?.profile) {
     return <Custom404 />;
   }
-
+  setProfile(data.profile as Profile);
   const profile = data?.profile;
 
   if (
@@ -73,7 +76,6 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
     return <Custom404 />;
   }
   setProfileType(getProfileType(data?.profile as Profile) as ProfileType);
-
   const renderTab = () => {
     switch (currTab) {
       case 'PROFILE':
@@ -91,10 +93,10 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
                     <Modal
                       title="Followers you know"
                       icon={<UsersIcon className="w-5 h-5 text-brand" />}
-                      show={showNewPostModal}
-                      onClose={() => setShowNewPostModal(false)}
+                      show={openModal}
+                      onClose={() => setOpenModal(false)}
                     >
-                      <CreatePostForm forCommunity />
+                      <CreatePostForm />
                     </Modal>
                   </>
                 )}

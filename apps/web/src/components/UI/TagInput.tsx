@@ -1,7 +1,9 @@
 import clsx from 'clsx';
 import dynamic from 'next/dynamic';
-import type { ComponentProps, ReactNode } from 'react';
-import { forwardRef, useId } from 'react';
+import type { ComponentProps, Dispatch, ReactNode, SetStateAction } from 'react';
+import { forwardRef, useId, useState } from 'react';
+
+import { FieldError } from './Form';
 
 const HelpTooltip = dynamic(() => import('./HelpTooltip'));
 
@@ -13,12 +15,14 @@ interface Props extends Omit<ComponentProps<'input'>, 'prefix'> {
   className?: string;
   helper?: ReactNode;
   error?: boolean;
+  setTags: Dispatch<SetStateAction<string[]>>;
 }
 
-export const Input = forwardRef<HTMLInputElement, Props>(function Input(
+export const TagInput = forwardRef<HTMLInputElement, Props>(function Input(
   { label, prefix, type = 'text', iconLeft, iconRight, error, className = '', helper, ...props },
   ref
 ) {
+  const [val, setVal] = useState('');
   const id = useId();
 
   const iconStyles = [
@@ -61,6 +65,18 @@ export const Input = forwardRef<HTMLInputElement, Props>(function Input(
               'peer border-none focus:ring-0 outline-none bg-transparent w-full',
               className
             )}
+            onChange={(e) => {
+              setVal(e.target.value);
+            }}
+            value={val}
+            // on enter press
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                props.setTags((prev) => [...prev, val]);
+                setVal('');
+              }
+            }}
             type={type}
             ref={ref}
             {...props}
@@ -73,7 +89,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(function Input(
           </span>
         </div>
       </div>
-      {/* {props.name && <FieldError name={props.name} />} */}
+      {props.name && <FieldError name={props.name} />}
     </label>
   );
 });

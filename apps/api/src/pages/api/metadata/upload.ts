@@ -1,9 +1,10 @@
 import Bundlr from '@bundlr-network/client';
-import { APP_NAME, ERROR_MESSAGE } from 'data/constants';
+import { APP_NAME } from 'data/constants';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { BUNDLR_CURRENCY, BUNDLR_NODE_URL } from 'src/constants';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  console.log('Object not created');
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -18,20 +19,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const payload = JSON.stringify(req.body);
 
-  try {
-    const bundlr = new Bundlr(BUNDLR_NODE_URL, BUNDLR_CURRENCY, process.env.BUNDLR_PRIVATE_KEY);
-    const tags = [
-      { name: 'Content-Type', value: 'application/json' },
-      { name: 'App-Name', value: APP_NAME }
-    ];
+  // try {
+  const bundlr = new Bundlr(BUNDLR_NODE_URL, BUNDLR_CURRENCY, process.env.BUNDLR_PRIVATE_KEY);
+  console.log('Object created');
+  const tags = [
+    { name: 'Content-Type', value: 'application/json' },
+    { name: 'App-Name', value: APP_NAME }
+  ];
 
-    const uploader = bundlr.uploader.chunkedUploader;
-    const { data } = await uploader.uploadData(Buffer.from(payload), { tags });
+  const uploader = bundlr.uploader.chunkedUploader;
+  const { data } = await uploader.uploadData(Buffer.from(payload), { tags });
 
-    return res.status(200).json({ success: true, id: data.id });
-  } catch {
-    return res.status(500).json({ success: false, message: ERROR_MESSAGE });
-  }
+  return res.status(200).json({ success: true, id: data.id });
+  // } catch {
+  //   return res.status(500).json({ success: false, message: ERROR_MESSAGE });
+  // }
 };
 
 export default handler;

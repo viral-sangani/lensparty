@@ -16,7 +16,7 @@ interface Props {
 const PublicationBody: FC<Props> = ({ publication }) => {
   const { pathname } = useRouter();
   const showMore = publication?.metadata?.content?.length > 450 && pathname !== '/posts/[id]';
-
+  publication.metadata.name;
   const Title = ({ text }: { text: string }) => {
     return <div className="text-2xl mb-2 font-bold text-black dark:text-gray-200">{text}</div>;
   };
@@ -24,7 +24,15 @@ const PublicationBody: FC<Props> = ({ publication }) => {
   return (
     <div className="break-words">
       {/* Title */}
-      <Title text={'Demo title'} />
+      {publication.metadata.name && (
+        <Title
+          text={
+            publication.metadata.name?.includes('.lens') || publication.metadata.name?.includes('.test')
+              ? ''
+              : publication.metadata.name!
+          }
+        />
+      )}
       <Markup
         className={clsx(
           { 'line-clamp-5': showMore },
