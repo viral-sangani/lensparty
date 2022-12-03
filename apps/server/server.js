@@ -1178,11 +1178,6 @@ app.get('/hastransactionbeenindexed', async (req, res, next) => {
   res.status(200).json({ data: result });
 });
 
-<<<<<<< HEAD
-app.listen(process.env.PORT, '0.0.0.0', () => {
-  console.log('process.env.PORT', process.env.PORT);
-  console.log('SERVER STARTED');
-=======
 app.get('/svg/:post', async (req, res, next) => {
   let { post } = req.params.post;
 
@@ -1196,7 +1191,6 @@ app.get('/svg/:post', async (req, res, next) => {
 
 app.listen(PORT, () => {
   console.log('Listening at port: ', PORT);
->>>>>>> 7a403f29340d89a1ae0dbf6baae13ca3d205fe0d
   Moralis.start({
     apiKey: process.env.MORALIS_API_KEY
   });
