@@ -124,9 +124,9 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
   return (
     <>
       {profile?.name ? (
-        <MetaTags title={`${profile?.name} (@${profile?.handle}) • ${APP_NAME}`} />
+        <MetaTags title={`${profile?.name} (u/${profile?.handle}) • ${APP_NAME}`} />
       ) : (
-        <MetaTags title={`@${profile?.handle} • ${APP_NAME}`} />
+        <MetaTags title={`u/${profile?.handle} • ${APP_NAME}`} />
       )}
       <GridLayout className="max-w-7xl w-full mx-auto mt-8">
         <GridItemFour>

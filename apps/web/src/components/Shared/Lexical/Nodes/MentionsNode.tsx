@@ -38,8 +38,8 @@ export class MentionNode extends TextNode {
   }
 
   constructor(mentionName: string, text?: string, key?: NodeKey) {
-    super(text ?? `@${mentionName}`, key);
-    this.__mention = `@${mentionName}`;
+    super(text ?? `u/${mentionName}`, key);
+    this.__mention = `u/${mentionName}`;
   }
 
   exportJSON(): SerializedMentionNode {

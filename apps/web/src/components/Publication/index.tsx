@@ -59,7 +59,7 @@ const ViewPublication: NextPage = () => {
         <MetaTags
           title={
             publication.__typename && publication?.profile?.handle
-              ? `${publication.__typename} by @${publication.profile.handle} • ${APP_NAME}`
+              ? `${publication.__typename} by u/${publication.profile.handle} • ${APP_NAME}`
               : APP_NAME
           }
         />

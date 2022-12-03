@@ -93,7 +93,7 @@ const SeeThroughLens: FC = () => {
             className="bg-gray-200 w-5 h-5 rounded-full border dark:border-gray-700/80"
             alt={profile?.handle}
           />
-          <span>{seeThroughProfile ? `@${profile?.handle}` : 'My Feed'}</span>
+          <span>{seeThroughProfile ? `u/${profile?.handle}` : 'My Feed'}</span>
           <ChevronDownIcon className="w-5 h-5" />
         </span>
       </Menu.Button>
