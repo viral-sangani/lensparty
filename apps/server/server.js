@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 const { Revise } = require('revise-sdk');
 
 const API_URL = 'https://api-mumbai.lens.dev';
-const PORT = 3001;
+const PORT = 80;
 const RPC_URL = 'https://rpc-mumbai.maticvigil.com/';
 let wallet;
 
