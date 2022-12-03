@@ -33,9 +33,11 @@ import { useReferenceModuleStore } from 'src/store/reference-module';
 import { useTransactionPersistStore } from 'src/store/transaction';
 import { v4 as uuid } from 'uuid';
 
-type Props = {};
+type Props = {
+  forCommunity?: boolean;
+};
 
-function CreatePostForm({}: Props) {
+function CreatePostForm({ forCommunity = false }: Props) {
   const currentProfile = useAppStore((state) => state.currentProfile);
   const publicationContent = usePublicationStore((state) => state.publicationContent);
   const setPublicationContent = usePublicationStore((state) => state.setPublicationContent);
@@ -210,7 +212,7 @@ function CreatePostForm({}: Props) {
           <UploadImageAttachment attachments={attachments} setAttachments={setAttachments} />
           <UploadVideoAttachment attachments={attachments} setAttachments={setAttachments} />
           <Giphy setGifAttachment={(gif: IGif) => setGifAttachment(gif)} />
-          <CollectSettings />
+          <CollectSettings forCommunity={forCommunity} />
         </div>
         <div className="ml-auto pt-2 sm:pt-0">
           <Button

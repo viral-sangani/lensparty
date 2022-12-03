@@ -20,7 +20,7 @@ const Explore: NextPage = () => {
   const [focus, setFocus] = useState<any>();
 
   const tabs = [
-    { name: 'For you', emoji: 'leaf-fluttering-in-wind.png', type: PublicationSortCriteria.CuratedProfiles },
+    { name: 'For you', emoji: 'leaf-fluttering-in-wind.png', type: PublicationSortCriteria.Latest },
     { name: 'Popular', emoji: 'hundred-points.png', type: PublicationSortCriteria.TopCommented },
     { name: 'Trending', emoji: 'heart-on-fire.png', type: PublicationSortCriteria.TopCollected },
     { name: 'Interesting', emoji: 'hushed-face.png', type: PublicationSortCriteria.TopMirrored }

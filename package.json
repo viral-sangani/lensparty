@@ -1,5 +1,5 @@
 {
-  "name": "lens-party",
+  "name": "server",
   "version": "1.0.3-beta",
   "private": true,
   "workspaces": [

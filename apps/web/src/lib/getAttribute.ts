@@ -5,7 +5,15 @@ interface Attribute {
   value: string;
 }
 
-type Query = 'hasPrideLogo' | 'app' | 'twitter' | 'location' | 'website' | 'statusEmoji' | 'statusMessage';
+type Query =
+  | 'hasPrideLogo'
+  | 'app'
+  | 'twitter'
+  | 'location'
+  | 'website'
+  | 'statusEmoji'
+  | 'statusMessage'
+  | 'profileCreator';
 
 /**
  *

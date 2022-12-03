@@ -38,6 +38,7 @@ const uploadToIPFS = async (data: any): Promise<LensterAttachment[]> => {
   const attachments = await Promise.all(
     files.map(async (_: any, i: number) => {
       const file = data.item(i);
+      console.log(data);
       await client.putObject({ ...params, Body: file, ContentType: file.type });
       const result = await client.headObject(params);
       const metadata = result.Metadata;

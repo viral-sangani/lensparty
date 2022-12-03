@@ -2,6 +2,7 @@ import { Button } from '@components/UI/Button';
 import { Spinner } from '@components/UI/Spinner';
 import useBroadcast from '@components/utils/hooks/useBroadcast';
 import { UserRemoveIcon } from '@heroicons/react/outline';
+import getProfileType from '@lib/getProfileType';
 import getSignature from '@lib/getSignature';
 import onError from '@lib/onError';
 import splitSignature from '@lib/splitSignature';
@@ -102,7 +103,7 @@ const Unfollow: FC<Props> = ({ profile, showText = false, setFollowing }) => {
         )
       }
     >
-      {showText && 'Unfollow'}
+      {showText && getProfileType(profile) === 'COMMUNITY' ? 'Leave' : 'Unfollow'}
     </Button>
   );
 };
