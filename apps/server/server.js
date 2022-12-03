@@ -815,7 +815,7 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
 });
 
 app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (req, res, next) => {
-  let { profileId } = req.query;
+  let { profileId, metadata } = req.body;
   let { accessToken } = parseTokens();
 
   let { address } = res.locals.jwtDecoded;
@@ -823,27 +823,27 @@ app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (re
   let attributes = await getProfileAttribute(profileId, 'profileCreator');
 
   if (attributes[0].value === address) {
-    let metadata = await uploadToIpfs(`${profileId}.json`, {
-      name: 'stani',
-      bio: 'test stani',
-      cover_picture: null,
-      attributes: [
-        {
-          displayType: 'number',
-          traitType: 'nft',
-          key: '0x60ae865ee4c725cd04353b5aab364553f56cef82',
-          value: 1
-        },
-        {
-          traitType: 'string',
-          key: 'profileCreator',
-          value: address
-        }
-      ],
-      version: '1.0.0',
-      metadata_id: v4(),
-      appId: 'lenssomething'
-    });
+    // let metadata = await uploadToIpfs(`${profileId}.json`, {
+    //   name: 'stani',
+    //   bio: 'test stani',
+    //   cover_picture: null,
+    //   attributes: [
+    //     {
+    //       displayType: 'number',
+    //       traitType: 'nft',
+    //       key: '0x60ae865ee4c725cd04353b5aab364553f56cef82',
+    //       value: 1
+    //     },
+    //     {
+    //       traitType: 'string',
+    //       key: 'profileCreator',
+    //       value: address
+    //     }
+    //   ],
+    //   version: '1.0.0',
+    //   metadata_id: v4(),
+    //   appId: 'lenssomething'
+    // });
 
     let setMetadataResponse = await axios({
       url: API_URL,
