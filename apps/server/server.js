@@ -427,7 +427,6 @@ async function authenticateMiddleWare(req, res, next) {
 
     // check if accessToken is valid
     let isAccessTokenValid = await verifyAccessToken(accessToken);
-
     if (isAccessTokenValid) {
       // not expired
     } else {
@@ -449,7 +448,7 @@ async function authenticateMiddleWare(req, res, next) {
 
     // send signature for authentication
     let tokens = await authenticateSignedMessage(wallet.address, signature);
-
+    console.log(tokens);
     // on success write down the access_token and refresh_token in the file.
     writeAccessTokensToFile(tokens);
 
@@ -504,11 +503,13 @@ async function refreshAccessToken(refreshToken) {
     }
   });
 
+  console.log(refreshResponse.data.data.refresh);
+
   return refreshResponse.data.data.refresh;
 }
 
 function writeAccessTokensToFile(tokensObj) {
-  fs.writeFile('access_tokens.json', JSON.stringify(tokensObj), (err) => console.log(err));
+  fs.writeFileSync('access_tokens.json', JSON.stringify(tokensObj));
 }
 
 async function verifyAccessToken(accessToken) {
@@ -713,7 +714,6 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
     });
 
     let { reason } = createProfileResponse.data.data.createProfile;
-    console.log(reason);
 
     if (!reason) {
       let { txHash } = createProfileResponse.data.data.createProfile;
