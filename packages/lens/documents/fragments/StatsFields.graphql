@@ -1,5 +1,6 @@
 fragment StatsFields on PublicationStats {
   totalUpvotes
+  totalDownvotes
   totalAmountOfMirrors
   totalAmountOfCollects
   totalAmountOfComments

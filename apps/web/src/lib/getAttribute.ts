@@ -13,6 +13,7 @@ type Query =
   | 'website'
   | 'statusEmoji'
   | 'statusMessage'
+  | 'tags'
   | 'profileCreator';
 
 /**

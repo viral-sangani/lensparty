@@ -3,13 +3,13 @@ import clsx from 'clsx';
 import type { ElectedMirror } from 'lens';
 import type { FC } from 'react';
 import { useAppStore } from 'src/store/app';
+import { useReactionStore } from 'src/store/reactionStore';
 
 import Analytics from './Analytics';
 import Collect from './Collect';
 import Comment from './Comment';
-import DownVote from './DownVote';
+import Like from './Like';
 import Mirror from './Mirror';
-import UpVote from './UpVote';
 
 interface Props {
   publication: LensPublication;
@@ -22,27 +22,46 @@ const PublicationActions: FC<Props> = ({ publication, electedMirror, isFullPubli
   const collectModuleType = publication?.collectModule.__typename;
   const canMirror = currentProfile ? publication?.canMirror?.result : true;
 
+  const setTotalUpVotes = useReactionStore((state) => state.setTotalUpVotes);
+  const setTotalDownVotes = useReactionStore((state) => state.setTotalDownVotes);
+  const setHasUpVoted = useReactionStore((state) => state.setHasUpVoted);
+  const setHasDownVoted = useReactionStore((state) => state.setHasDownVoted);
+
+  const isMirror = publication.__typename === 'Mirror';
+  setTotalUpVotes(isMirror ? publication?.mirrorOf?.stats?.totalUpvotes : publication?.stats?.totalUpvotes);
+  setTotalDownVotes(
+    isMirror ? publication?.mirrorOf?.stats?.totalDownvotes : publication?.stats?.totalDownvotes
+  );
+  setHasUpVoted((isMirror ? publication?.mirrorOf?.reaction : publication?.reaction) === 'UPVOTE');
+  setHasDownVoted((isMirror ? publication?.mirrorOf?.reaction : publication?.reaction) === 'DOWNVOTE');
+
   return (
     <span
       className={clsx(
-        'justify-between w-full flex gap-6 items-center mt-3 pt-2 -ml-2 text-gray-500 sm:gap-8 border-t border-gray-200 dark:border-gray-700'
+        'justify-between w-full flex gap-6 items-center pt-2 text-gray-500 sm:gap-8 border-t border-gray-200 dark:border-gray-700'
       )}
       onClick={(event) => {
         event.stopPropagation();
       }}
     >
-      <UpVote publication={publication} isFullPublication={isFullPublication} />
-      <DownVote publication={publication} isFullPublication={isFullPublication} />
-      <Comment publication={publication} isFullPublication={isFullPublication} />
-      {canMirror && <Mirror publication={publication} isFullPublication={isFullPublication} />}
-      {/* <Like publication={publication} isFullPublication={isFullPublication} /> */}
-      {collectModuleType !== 'RevertCollectModuleSettings' && (
-        <Collect
-          electedMirror={electedMirror}
-          publication={publication}
-          isFullPublication={isFullPublication}
-        />
-      )}
+      <div className="w-full">
+        <Like publication={publication} isFullPublication={isFullPublication} />
+      </div>
+      <div className="w-full">
+        <Comment publication={publication} isFullPublication={isFullPublication} />
+      </div>
+      <div className="w-full">
+        {canMirror && <Mirror publication={publication} isFullPublication={isFullPublication} />}
+      </div>
+      <div className="w-full">
+        {collectModuleType !== 'RevertCollectModuleSettings' && (
+          <Collect
+            electedMirror={electedMirror}
+            publication={publication}
+            isFullPublication={isFullPublication}
+          />
+        )}
+      </div>
       <Analytics publication={publication} isFullPublication={isFullPublication} />
       {/* <PublicationMenu publication={publication} isFullPublication={isFullPublication} /> */}
     </span>

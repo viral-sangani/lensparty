@@ -52,6 +52,8 @@ import { useTransactionPersistStore } from 'src/store/transaction';
 import { v4 as uuid } from 'uuid';
 import { useContractWrite, useSignTypedData } from 'wagmi';
 
+import UploadImageAttachment from './Actions/UploadImageAttachment';
+import UploadVideoAttachment from './Actions/UploadVideoAttachment';
 import Editor from './Editor';
 
 const Attachment = dynamic(() => import('@components/Composer/Actions/AttachmentTemp'), {
@@ -351,7 +353,7 @@ const NewPublication: FC<Props> = ({ publication }) => {
         external_url: `https://lenster.xyz/u/${currentProfile?.handle}`,
         image: attachments.length > 0 ? getAttachmentImage() : textNftImageUrl,
         imageMimeType: attachments.length > 0 ? getAttachmentImageMimeType() : 'image/svg+xml',
-        name: isAudioPublication ? audioPublication.title : `Comment by @${currentProfile?.handle}`,
+        name: isAudioPublication ? audioPublication.title : `Comment by u/{currentProfile?.handle}`,
         tags: getTags(publicationContent),
         animation_url: getAnimationUrl(),
         mainContentFocus: getMainContentFocus(),
@@ -416,19 +418,20 @@ const NewPublication: FC<Props> = ({ publication }) => {
   return (
     <Card className={clsx({ 'border-none rounded-none': !isComment }, 'pb-3')}>
       {error && <ErrorMessage className="mb-3" title="Transaction failed!" error={error} />}
-      <Editor />
+      <Editor showLargeTextArea={false} />
       {publicationContentError && (
         <div className="px-5 pb-3 mt-1 text-sm font-bold text-red-500">{publicationContentError}</div>
       )}
-      <div className="block items-center sm:flex px-5">
-        <div className="flex items-center space-x-4">
-          <Attachment attachments={attachments} setAttachments={setAttachments} />
+      <div className="flex flex-col space-y-2 items-center sm:flex px-5">
+        <div className="grid grid-rows-2 grid-cols-2 gap-2 w-full">
+          <UploadImageAttachment attachments={attachments} setAttachments={setAttachments} />
+          <UploadVideoAttachment attachments={attachments} setAttachments={setAttachments} />
           <Giphy setGifAttachment={(gif: IGif) => setGifAttachment(gif)} />
           <CollectSettings />
           {/* <ReferenceSettings /> */}
           {/* <AccessSettings /> */}
         </div>
-        <div className="ml-auto pt-2 sm:pt-0">
+        <div className="ml-auto mt-2 sm:pt-0">
           <Button
             disabled={isSubmitting}
             icon={

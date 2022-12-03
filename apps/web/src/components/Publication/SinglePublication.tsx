@@ -57,13 +57,13 @@ const SinglePublication: FC<Props> = ({
     : publication?.createdAt;
 
   return (
-    <article className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer first:rounded-t-xl last:rounded-b-xl p-5 border-2 border-gray-200 dark:border-gray-800 rounded-xl mb-4">
+    <article className="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer first:rounded-t-xl last:rounded-b-xl px-5 pt-5 pb-2 border-2 border-gray-200 dark:border-gray-800 rounded-xl mb-4">
       {feedItem ? (
         <EventType feedItem={feedItem} showType={showType} showThread={showThread} />
       ) : (
         <PublicationType publication={publication} showType={showType} showThread={showThread} />
       )}
-      <div className="flex justify-between pb-4 space-x-1.5">
+      <div className="pb-1 w-full">
         <span onClick={(event) => event.stopPropagation()}>
           <HeaderTile
             isSmall={true}

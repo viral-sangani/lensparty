@@ -1,11 +1,4 @@
-import {
-  HandIcon,
-  HomeIcon,
-  PencilAltIcon,
-  PlusCircleIcon,
-  TrendingUpIcon,
-  UserCircleIcon
-} from '@heroicons/react/outline';
+import { HandIcon, HomeIcon, PlusCircleIcon, TrendingUpIcon, UserCircleIcon } from '@heroicons/react/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -42,14 +35,6 @@ const Sidebar: FC<SidebarProps> = ({ className }) => {
 
   return (
     <div className={`mt-8 py-3 rounded-lg lg:px-3 mb-4 sm:px-0 dark:bg-black bg-white ${className ?? ''}`}>
-      <Link
-        href={'/create-post'}
-        className={`bg-brand-500 flex items-center space-x-3 rounded-lg px-3 py-2 hover:bg-brand-600 hover:text-brand dark:hover:bg-opacity-20 dark:bg-opacity-20 hover:bg-opacity-100`}
-      >
-        <PencilAltIcon className="w-4 h-4 text-brand-500" />
-        <div className="dark:text-white text-black">Create Post</div>
-      </Link>
-      <div className="w-full divider my-3" />
       <Menu current={pathname == '/'} url="/">
         <HomeIcon className="w-4 h-4 dark:text-gray-200 text-black" />
         <div className="dark:text-gray-200 text-black">Home</div>

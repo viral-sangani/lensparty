@@ -29,10 +29,7 @@ type Props = {};
 
 const createCommunitySchema = object({
   name: string().max(100, { message: 'Name should not exceed 100 characters' }),
-  bio: string().max(260, { message: 'Bio should not exceed 260 characters' }),
-  amount: string().min(0.001, { message: 'Invalid amount' }),
-  recipient: string().max(42, { message: 'Ethereum address should be within 42 characters' }),
-  nftCollection: string().max(42, { message: 'Ethereum address should be within 42 characters' })
+  bio: string().max(260, { message: 'Bio should not exceed 260 characters' })
 });
 
 function CreateCommunityForm({}: Props) {
@@ -44,6 +41,10 @@ function CreateCommunityForm({}: Props) {
   const [txHash, setTxHash] = useState('');
   const currentProfile = useAppStore((state) => state.currentProfile);
   const [collectFees, setCollectFees] = useState(false);
+
+  const [amount, setAmount] = useState('');
+  const [recipient, setRecipient] = useState('');
+  const [nftCollection, setNftCollection] = useState('');
 
   const [selectedCurrency, setSelectedCurrency] = useState(DEFAULT_COLLECT_TOKEN);
   const [selectedCurrencySymbol, setSelectedCurrencySymbol] = useState('WMATIC');
@@ -59,49 +60,66 @@ function CreateCommunityForm({}: Props) {
     schema: createCommunitySchema,
     defaultValues: {
       name: '',
-      bio: '',
-      amount: '',
-      recipient: '',
-      nftCollection: ''
+      bio: ''
     }
   });
 
   const createCommunity = async (name: string, bio: string) => {
-    try {
-      if (!currentProfile) {
-        return toast.error(SIGN_WALLET);
-      }
-      setIsUploading(true);
-
-      let createProfileResponse = await axios.post('http://localhost:3001/createProfile', {
-        handle: name,
-        profilePictureUri: cover,
-        bio,
-        lensToken: localStorage.getItem('accessToken'),
-        // join tags and create a list
-        tag: tags.join(','),
-        feeFollowModule: collectFees
-          ? {
-              amount: {
-                currency: selectedCurrency,
-                value: form.getValues().amount
-              },
-              recipient: form.getValues().recipient
-            }
-          : null,
-        nftCollection: nftGating ? form.getValues().nftCollection : null
+    console.log('tags', tags);
+    console.log('tags.join(', ')', tags.join(','));
+    if (cover === '') {
+      onError({
+        message: 'Please add a profile image for your community'
       });
-      let tx = createProfileResponse.data.data.txHash;
-      setTxHash(tx);
-      setIsIndexing(true);
-      await axios.get(`http://localhost:3001/hastransactionbeenindexed?txHash=${tx}`);
-      setIsIndexing(false);
-      setIsUploading(false);
-      router.push(`/l/${name}.test`);
-    } catch (error) {
-      onError(error);
-      setIsIndexing(false);
-      setIsUploading(false);
+    } else if (collectFees && amount === '') {
+      onError({
+        message: 'Please add amount value'
+      });
+    } else if (nftGating && nftCollection === '') {
+      onError({
+        message: 'Please add NFT collection address'
+      });
+    } else if (collectFees && amount === '') {
+      onError({
+        message: 'Please add amount value'
+      });
+    } else {
+      try {
+        if (!currentProfile) {
+          return toast.error(SIGN_WALLET);
+        }
+        setIsUploading(true);
+
+        let createProfileResponse = await axios.post('http://localhost:3001/createProfile', {
+          handle: name,
+          profilePictureUri: cover,
+          bio,
+          lensToken: localStorage.getItem('accessToken'),
+          // join tags and create a list
+          tags: tags ? tags.join(',') : null,
+          feeFollowModule: collectFees
+            ? {
+                amount: {
+                  currency: selectedCurrency,
+                  value: amount
+                },
+                recipient: recipient
+              }
+            : null,
+          nftCollection: nftGating ? nftCollection : null
+        });
+        let tx = createProfileResponse.data.data.txHash;
+        setTxHash(tx);
+        setIsIndexing(true);
+        await axios.get(`http://localhost:3001/hastransactionbeenindexed?txHash=${tx}`);
+        setIsIndexing(false);
+        setIsUploading(false);
+        router.push(`/c/${name}.test`);
+      } catch (error) {
+        onError(error);
+        setIsIndexing(false);
+        setIsUploading(false);
+      }
     }
   };
 
@@ -143,8 +161,9 @@ function CreateCommunityForm({}: Props) {
         }}
       >
         {/* {error && <ErrorMessage className="mb-3" title="Transaction failed!" error={error} />} */}
-        <Input label="Name" type="text" placeholder="EthIndia" {...form.register('name')} />
+        <Input required label="Name" type="text" placeholder="EthIndia" {...form.register('name')} />
         <TextArea
+          required
           label="Bio"
           placeholder="Tell us something about this community!"
           rows={5}
@@ -232,7 +251,13 @@ function CreateCommunityForm({}: Props) {
                 type="number"
                 step="0.0001"
                 min="0"
+                required={false}
                 max="100000"
+                name="amount"
+                value={amount}
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                }}
                 prefix={
                   <img
                     className="w-6 h-6"
@@ -243,13 +268,17 @@ function CreateCommunityForm({}: Props) {
                   />
                 }
                 placeholder="5"
-                {...form.register('amount')}
               />
               <Input
+                name="recipient"
+                value={recipient}
+                onChange={(e) => {
+                  setRecipient(e.target.value);
+                }}
                 label="Funds recipient"
                 type="text"
                 placeholder="0x3A5bd...5e3"
-                {...form.register('recipient')}
+                required={false}
               />
             </div>
           )}
@@ -274,7 +303,11 @@ function CreateCommunityForm({}: Props) {
                 label="NFT collection Address"
                 type="text"
                 placeholder="0x3A5bd...5e3"
-                {...form.register('nftCollection')}
+                name="nftColection"
+                value={nftCollection}
+                onChange={(e) => {
+                  setNftCollection(e.target.value);
+                }}
               />
             </div>
           )}
@@ -289,7 +322,7 @@ function CreateCommunityForm({}: Props) {
           >
             Create Community
           </Button>
-          {txHash ? <IndexStatus txHash={txHash} /> : null}
+          {isIndexing ? <IndexStatus txHash={txHash} /> : null}
         </div>
       </Form>
     </Card>

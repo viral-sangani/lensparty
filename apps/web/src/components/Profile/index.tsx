@@ -34,8 +34,8 @@ type Props = {
 
 const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
   const setProfileType = useProfileTypeStore((state) => state.setProfileType);
-  const openModal = useCreatePostFormStore((state) => state.openModal);
-  const setOpenModal = useCreatePostFormStore((state) => state.setOpenModal);
+  const openCommunityModal = useCreatePostFormStore((state) => state.openCommunityModal);
+  const setOpenCommunityModal = useCreatePostFormStore((state) => state.setOpenCommunityModal);
   const setProfile = useCreatePostFormStore((state) => state.setProfile);
 
   const {
@@ -84,17 +84,16 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
             {getProfileType(data?.profile as Profile) === 'USER' && (
               <FeedType stats={profile?.stats as any} setFeedType={setFeedType} feedType={feedType} />
             )}
-
             {(feedType === 'FEED' || feedType === 'REPLIES' || feedType === 'MEDIA') && (
               <>
                 {data?.profile?.isFollowedByMe && (
                   <>
                     <NewPost />
                     <Modal
-                      title="Followers you know"
+                      title="Create Post"
                       icon={<UsersIcon className="w-5 h-5 text-brand" />}
-                      show={openModal}
-                      onClose={() => setOpenModal(false)}
+                      show={openCommunityModal}
+                      onClose={() => setOpenCommunityModal(false)}
                     >
                       <CreatePostForm />
                     </Modal>
@@ -125,9 +124,9 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
   return (
     <>
       {profile?.name ? (
-        <MetaTags title={`${profile?.name} (@${profile?.handle}) • ${APP_NAME}`} />
+        <MetaTags title={`${profile?.name} (u/${profile?.handle}) • ${APP_NAME}`} />
       ) : (
-        <MetaTags title={`@${profile?.handle} • ${APP_NAME}`} />
+        <MetaTags title={`u/${profile?.handle} • ${APP_NAME}`} />
       )}
       <GridLayout className="max-w-7xl w-full mx-auto mt-8">
         <GridItemFour>

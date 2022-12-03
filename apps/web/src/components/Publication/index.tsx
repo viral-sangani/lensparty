@@ -55,18 +55,18 @@ const ViewPublication: NextPage = () => {
 
   return (
     <div className="dark:bg-gray-900 bg-white">
-      <GridLayout className="lg:mx-20 md:mx-10 mx-0 mt-8">
+      <GridLayout className="lg:mx-20 md:mx-10 mx-0">
         <MetaTags
           title={
             publication.__typename && publication?.profile?.handle
-              ? `${publication.__typename} by @${publication.profile.handle} • ${APP_NAME}`
+              ? `${publication.__typename} by u/${publication.profile.handle} • ${APP_NAME}`
               : APP_NAME
           }
         />
         <GridItemThree>
           <Sidebar className="hidden md:block" />
         </GridItemThree>
-        <GridItemNine>
+        <GridItemNine className="mt-8">
           <GridLayout>
             <GridItemEight className="space-y-5">
               <Card>
