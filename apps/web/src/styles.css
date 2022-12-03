@@ -9,7 +9,7 @@ html {
 }
 
 body {
-  font-family: 'CircularXXSub', sans-serif;
+  font-family: 'Lato', sans-serif;
   @apply bg-gray-50;
   @apply dark:bg-black;
 }
