@@ -8,6 +8,7 @@ const { v4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const PushAPI = require('@pushprotocol/restapi');
+const bodyParser = require('body-parser');
 
 const API_URL = 'https://api-mumbai.lens.dev';
 const PORT = 3001;
@@ -329,7 +330,7 @@ query Followers ($request: FollowersRequest!) {
 `;
 
 function requiresToken(req, res, next) {
-  let { lensToken } = req.query;
+  let { lensToken } = req.body;
   if (lensToken) {
     let decoded = jwt.decode(lensToken);
     console.log(decoded);
@@ -640,29 +641,6 @@ async function getProfileAttribute(profileId, attributeKey) {
   return attributes.filter((attribute) => attribute.key === attributeKey);
 }
 
-async function setProfileMetadataFn(id, metadata, accessToken) {
-  let setProfileMetadataResponse = await axios({
-    url: API_URL,
-    method: 'post',
-    data: {
-      query: setProfileMetadata,
-      variables: {
-        request: {
-          profileId: id,
-          metadata
-        }
-      }
-    },
-    headers: {
-      'x-access-token': `Bearer ${accessToken}`
-    }
-  });
-
-  let signature = await signMessage(setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData);
-
-  return signature;
-}
-
 async function getProfileFollowers(profileId) {
   let followersResponse = await axios({
     url: API_URL,
@@ -684,13 +662,35 @@ async function getProfileFollowers(profileId) {
 const app = express();
 
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, res, next) => {
   let { accessToken } = parseTokens();
 
-  let { followModule, tag, handle, profilePictureUri, bio, tags } = req.body;
+  let { followModule, handle, profilePictureUri, bio, tags, nftCollection } = req.body;
 
   let { address } = res.locals.jwtDecoded;
+
+  let profileRequest = {
+    handle,
+    profilePictureUri,
+    // followNFTURI,
+    // feeFollowModule: {
+    //   amount: {
+    //     currency: '0xD40282e050723Ae26Aeb0F77022dB14470f4e011',
+    //     value: '0.01'
+    //   },
+    //   recipient: '0xEEA0C1f5ab0159dba749Dc0BAee462E5e293daaF'
+    // }
+    followModule: followModule
+      ? followModule
+      : {
+          freeFollowModule: true
+        }
+  };
+
+  console.log(profileRequest);
 
   try {
     let createProfileResponse = await axios({
@@ -699,23 +699,7 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
       data: {
         query: createProfile,
         variables: {
-          request: {
-            handle,
-            profilePictureUri,
-            // followNFTURI,
-            // feeFollowModule: {
-            //   amount: {
-            //     currency: '0xD40282e050723Ae26Aeb0F77022dB14470f4e011',
-            //     value: '0.01'
-            //   },
-            //   recipient: '0xEEA0C1f5ab0159dba749Dc0BAee462E5e293daaF'
-            // }
-            followModule: followModule
-              ? followModule
-              : {
-                  freeFollowModule: true
-                }
-          }
+          request: profileRequest
         }
       },
       headers: {
@@ -737,14 +721,20 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
         version: '1.0.0',
         metadata_id: v4(),
         name: handle,
-        bio,
+        bio: bio !== undefined ? bio : null,
         cover_picture: null,
         attributes: [
-          tags && {
-            traitType: 'string',
-            key: 'tags',
-            value: tags
-          },
+          // tags !== undefined
+          //   ? {
+          //       traitType: 'string',
+          //       key: 'tags',
+          //       value: tags
+          //     }
+          //   : {
+          //       traitType: 'string',
+          //       key: 'tags',
+          //       value: ''
+          //     },
           {
             traitType: 'string',
             key: 'profileType',
@@ -754,18 +744,39 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
             traitType: 'string',
             key: 'profileCreator',
             value: address
+          },
+          {
+            displayType: 'number',
+            traitType: 'nft',
+            key: nftCollection,
+            value: 1
           }
         ]
       });
 
-      let signature = await setProfileMetadataFn(id, metadata, accessToken);
+      let setProfileMetadataResponse = await axios({
+        url: API_URL,
+        method: 'post',
+        data: {
+          query: setProfileMetadata,
+          variables: {
+            request: {
+              profileId: id,
+              metadata
+            }
+          }
+        },
+        headers: {
+          'x-access-token': `Bearer ${accessToken}`
+        }
+      });
 
-      let broadcastResponse = await broadcastTransaction(
-        accessToken,
-
-        setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData.id,
-        signature
+      let txid = setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData.id;
+      let signature = await signMessage(
+        setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData
       );
+
+      let broadcastResponse = await broadcastTransaction(accessToken, txid, signature);
 
       res.status(200).json({
         data: broadcastResponse,
@@ -773,7 +784,7 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
       });
     } else {
       res.status(200).json({
-        data: reason
+        data: { reason }
       });
     }
   } catch (err) {
@@ -853,11 +864,9 @@ app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (re
 });
 
 app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, next) => {
-  let { profileId, posterProfileId } = req.query;
+  let { profileId, posterProfileId, collectModule } = req.body;
   let { address } = res.locals.jwtDecoded;
   let { accessToken } = parseTokens();
-
-  const CHANNEL_PK = '0x39dd89ea3393380e5c16d7b0f0a72e936d2680e78a37b4bc68349f2dd170fa44';
 
   // create post
   // get community profile from profileId or handle
@@ -869,7 +878,7 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
   let conditions = profile.attributes.filter((attribute) => attribute.traitType == 'nft');
 
   let nftContractAddress = conditions[0].key;
-  let nftBalance = conditions[0].value;
+  // let nftBalance = conditions[0].value;
 
   // check if wallet meets the conditions to post
   let walletSatisfiesConditions = false;
@@ -940,7 +949,7 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
       appId: 'lensparty'
     };
 
-    let contentURI = await uploadToIpfs('Comment_by_@youmemeworld.lens', contentMetadata);
+    let contentURI = await uploadToIpfs(`post_by_@${posterProfile.handle}`, contentMetadata);
 
     let createPostTypedDataResponse = await axios({
       url: API_URL,
@@ -957,7 +966,7 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
               }
             },
             referenceModule: {
-              followerOnlyReferenceModule: false
+              followerOnlyReferenceModule: true
             }
           }
         }
