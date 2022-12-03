@@ -1190,7 +1190,7 @@ app.get('/svg/:post', async (req, res, next) => {
 });
 
 app.listen(process.env.PORT, () => {
-  console.log('Listening at port: ', PORT);
+  console.log('Listening at port: ', process.env.PORT);
   Moralis.start({
     apiKey: process.env.MORALIS_API_KEY
   });
