@@ -5,9 +5,10 @@ import { Card } from '@components/UI/Card';
 import { Form, useZodForm } from '@components/UI/Form';
 import { Input } from '@components/UI/Input';
 import { Spinner } from '@components/UI/Spinner';
+import { TagInput } from '@components/UI/TagInput';
 import { TextArea } from '@components/UI/TextArea';
 import { Toggle } from '@components/UI/Toggle';
-import { CollectionIcon, PhotographIcon, PlusIcon } from '@heroicons/react/outline';
+import { CollectionIcon, PhotographIcon, PlusIcon, XIcon } from '@heroicons/react/outline';
 import getIPFSLink from '@lib/getIPFSLink';
 import getTokenImage from '@lib/getTokenImage';
 import imageProxy from '@lib/imageProxy';
@@ -52,6 +53,8 @@ function CreateCommunityForm({}: Props) {
     skip: !currentProfile?.id
   });
 
+  const [tags, setTags] = useState<string[]>([]);
+
   const form = useZodForm({
     schema: createCommunitySchema,
     defaultValues: {
@@ -70,13 +73,23 @@ function CreateCommunityForm({}: Props) {
       }
       setIsUploading(true);
 
-      let createProfileResponse = await axios.post('http://localhost:3001/createProfile', null, {
-        params: {
-          handle: name,
-          profilePictureUri: cover,
-          bio,
-          lensToken: localStorage.getItem('accessToken')
-        }
+      let createProfileResponse = await axios.post('http://localhost:3001/createProfile', {
+        handle: name,
+        profilePictureUri: cover,
+        bio,
+        lensToken: localStorage.getItem('accessToken'),
+        // join tags and create a list
+        tag: tags.join(','),
+        feeFollowModule: collectFees
+          ? {
+              amount: {
+                currency: selectedCurrency,
+                value: form.getValues().amount
+              },
+              recipient: form.getValues().recipient
+            }
+          : null,
+        nftCollection: nftGating ? form.getValues().nftCollection : null
       });
       let tx = createProfileResponse.data.data.txHash;
       setTxHash(tx);
@@ -154,6 +167,32 @@ function CreateCommunityForm({}: Props) {
               {uploading && <Spinner size="sm" />}
             </div>
           </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="label">Enter the Tags</div>
+          <div className="space-y-3">
+            <TagInput setTags={setTags} placeholder="Enter the tags" className="w-full" />
+          </div>
+          {tags && (
+            <div className="flex flex-row space-x-2 pt-2 flex-nowrap">
+              {tags.map((tag) => (
+                <div
+                  key={tag}
+                  className="flex flex-row items-center bg-gray-600 px-2 py-0.5  text-sm rounded-lg"
+                >
+                  <XIcon
+                    className="w-4 h-4 mr-1 cursor-pointer"
+                    // on click remove the item from tags
+                    onClick={() => {
+                      setTags(tags.filter((item) => item !== tag));
+                    }}
+                  />
+                  {tag}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="space-y-3">

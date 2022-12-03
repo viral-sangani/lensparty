@@ -529,10 +529,6 @@ async function verifyAccessToken(accessToken) {
 }
 
 async function uploadToIpfs(name, content) {
-  await Moralis.start({
-    apiKey: process.env.MORALIS_API_KEY
-  });
-
   const uploadArray = [
     {
       path: name,
@@ -723,10 +719,6 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
 
     let { id } = profile;
 
-    await Moralis.start({
-      apiKey: process.env.MORALIS_API_KEY
-    });
-
     let metadata = await uploadToIpfs(`${handle}_metadata.json`, {
       version: '1.0.0',
       metadata_id: v4(),
@@ -767,10 +759,6 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
 app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (req, res, next) => {
   let { profileId } = req.query;
   let { accessToken } = parseTokens();
-
-  await Moralis.start({
-    apiKey: process.env.MORALIS_API_KEY
-  });
 
   let { address } = res.locals.jwtDecoded;
 
@@ -1051,4 +1039,7 @@ app.get('/isFollowing', async (req, res, next) => {
 });
 app.listen(PORT, () => {
   console.log('Listening at port: ', PORT);
+  Moralis.start({
+    apiKey: process.env.MORALIS_API_KEY
+  });
 });

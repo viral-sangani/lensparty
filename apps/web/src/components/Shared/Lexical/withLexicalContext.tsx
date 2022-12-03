@@ -7,7 +7,7 @@ import type { FC } from 'react';
 import { EmojiNode } from './Nodes/EmojiNode';
 import { MentionNode } from './Nodes/MentionsNode';
 
-const initialConfig = {
+export const initialConfig = {
   namespace: 'composer',
   theme: {
     text: {

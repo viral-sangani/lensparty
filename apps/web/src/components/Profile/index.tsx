@@ -14,6 +14,7 @@ import { useState } from 'react';
 import Custom404 from 'src/pages/404';
 import Custom500 from 'src/pages/500';
 import { useAppStore } from 'src/store/app';
+import { useCreatePostFormStore } from 'src/store/create-post-form';
 import { useProfileTabStore } from 'src/store/profile-tab';
 import type { ProfileType } from 'src/store/profile-type';
 import { useProfileTypeStore } from 'src/store/profile-type';
@@ -32,9 +33,10 @@ type Props = {
 };
 
 const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
+  console.log('isCommunity', isCommunity);
   const setProfileType = useProfileTypeStore((state) => state.setProfileType);
   const [showNewPostModal, setShowNewPostModal] = useState(false);
-
+  const setProfile = useCreatePostFormStore((state) => state.setProfile);
   const {
     query: { username, type }
   } = useRouter();
@@ -63,7 +65,7 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
   if (!data?.profile) {
     return <Custom404 />;
   }
-
+  setProfile(data.profile as Profile);
   const profile = data?.profile;
 
   if (
@@ -94,7 +96,7 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
                       show={showNewPostModal}
                       onClose={() => setShowNewPostModal(false)}
                     >
-                      <CreatePostForm forCommunity />
+                      <CreatePostForm forCommunity={isCommunity} profile={data.profile as Profile} />
                     </Modal>
                   </>
                 )}
