@@ -816,34 +816,24 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
 
 app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (req, res, next) => {
   let { profileId, metadata } = req.body;
+  let { name, bio, cover_picture, attributes: inputAttributes, version, appId } = metadata;
   let { accessToken } = parseTokens();
 
   let { address } = res.locals.jwtDecoded;
 
   let attributes = await getProfileAttribute(profileId, 'profileCreator');
+  let profile = await getProfileUsingProfileId(profileId);
 
   if (attributes[0].value === address) {
-    // let metadata = await uploadToIpfs(`${profileId}.json`, {
-    //   name: 'stani',
-    //   bio: 'test stani',
-    //   cover_picture: null,
-    //   attributes: [
-    //     {
-    //       displayType: 'number',
-    //       traitType: 'nft',
-    //       key: '0x60ae865ee4c725cd04353b5aab364553f56cef82',
-    //       value: 1
-    //     },
-    //     {
-    //       traitType: 'string',
-    //       key: 'profileCreator',
-    //       value: address
-    //     }
-    //   ],
-    //   version: '1.0.0',
-    //   metadata_id: v4(),
-    //   appId: 'lenssomething'
-    // });
+    let metadata = await uploadToIpfs(`${profileId}.json`, {
+      name,
+      bio,
+      cover_picture: cover_picture !== null ? cover_picture : null,
+      attributes: [...inputAttributes, ...profile.attributes],
+      version,
+      metadata_id: v4(),
+      appId
+    });
 
     let setMetadataResponse = await axios({
       url: API_URL,
