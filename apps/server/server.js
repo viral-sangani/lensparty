@@ -1098,6 +1098,56 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
   }
 });
 
+app.post('/optin', authenticateMiddleWare, requiresToken, async (req, res, next) => {
+  let { address } = res.locals.jwtDecoded;
+  let { profileId } = req.body;
+
+  let profile = await getProfileUsingProfileId(profileId);
+
+  let optedIn = profile.metadata.attributes.filter((attribute) => attribute.key === 'optedIn');
+  let newAttributes = profile.metadata.attributes.filter((attribute) => attribute.key !== 'optedIn');
+  if (optedIn) {
+    optedIn[0].value = optedIn[0].value.length > 0 ? `${optedIn[0].value},${address}` : `${address}`;
+    newAttributes.push(optedIn[0]);
+  } else {
+    newAttributes.push({ traitType: 'string', key: 'optedIn', value: address });
+  }
+
+  let metadata = {
+    ...profile.metadata,
+    attributes: newAttributes
+  };
+
+  let setMetadataResponse = await axios({
+    url: API_URL,
+    method: 'post',
+    data: {
+      query: setProfileMetadata,
+      variables: {
+        request: {
+          profileId,
+          metadata: finalMetadata
+        }
+      }
+    },
+    headers: {
+      'x-access-token': `Bearer ${accessToken}`
+    }
+  });
+
+  let signature = await signMessage(setMetadataResponse.data.data.createSetProfileMetadataTypedData);
+
+  let broadcastResponse = await broadcastTransaction(
+    accessToken,
+    setMetadataResponse.data.data.createSetProfileMetadataTypedData.id,
+    signature
+  );
+
+  res.status(200).json({
+    data: broadcastResponse
+  });
+});
+
 app.get('/hastransactionbeenindexed', async (req, res, next) => {
   let { txHash } = req.query;
   let { accessToken } = parseTokens();
