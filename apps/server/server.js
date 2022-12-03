@@ -530,10 +530,6 @@ async function verifyAccessToken(accessToken) {
 }
 
 async function uploadToIpfs(name, content) {
-  await Moralis.start({
-    apiKey: process.env.MORALIS_API_KEY
-  });
-
   const uploadArray = [
     {
       path: name,
@@ -717,48 +713,55 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
       }
     });
 
-    let { txHash } = createProfileResponse.data.data.createProfile;
-    await pollUntilIndexed(accessToken, txHash);
+    let { reason } = createProfileResponse.data.data.createProfile;
+    console.log(reason);
 
-    let profile = await getProfileUsingHandle(`${handle}.test`);
+    if (!reason) {
+      let { txHash } = createProfileResponse.data.data.createProfile;
+      await pollUntilIndexed(accessToken, txHash);
 
-    let { id } = profile;
+      let profile = await getProfileUsingHandle(`${handle}.test`);
 
-    await Moralis.start({
-      apiKey: process.env.MORALIS_API_KEY
-    });
+      let { id } = profile;
 
-    let metadata = await uploadToIpfs(`${handle}_metadata.json`, {
-      version: '1.0.0',
-      metadata_id: v4(),
-      name: handle,
-      bio,
-      cover_picture: null,
-      attributes: [
-        {
-          traitType: 'string',
-          key: 'profileType',
-          value: 'community'
-        },
-        {
-          traitType: 'string',
-          key: 'profileCreator',
-          value: address
-        }
-      ]
-    });
+      let metadata = await uploadToIpfs(`${handle}_metadata.json`, {
+        version: '1.0.0',
+        metadata_id: v4(),
+        name: handle,
+        bio,
+        cover_picture: null,
+        attributes: [
+          {
+            traitType: 'string',
+            key: 'profileType',
+            value: 'community'
+          },
+          {
+            traitType: 'string',
+            key: 'profileCreator',
+            value: address
+          }
+        ]
+      });
 
-    let broadcastResponse = await broadcastTransaction(
-      accessToken,
+      let signature = await setProfileMetadata(id, metadata, accessToken);
 
-      setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData.id,
-      signature
-    );
+      let broadcastResponse = await broadcastTransaction(
+        accessToken,
 
-    res.status(200).json({
-      data: broadcastResponse,
-      handle
-    });
+        setProfileMetadataResponse.data.data.createSetProfileMetadataTypedData.id,
+        signature
+      );
+
+      res.status(200).json({
+        data: broadcastResponse,
+        handle
+      });
+    } else {
+      res.status(200).json({
+        data: reason
+      });
+    }
   } catch (err) {
     console.log(err);
     res.status(400).json({ error: err });
@@ -768,10 +771,6 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
 app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (req, res, next) => {
   let { profileId } = req.query;
   let { accessToken } = parseTokens();
-
-  await Moralis.start({
-    apiKey: process.env.MORALIS_API_KEY
-  });
 
   let { address } = res.locals.jwtDecoded;
 
@@ -1052,4 +1051,7 @@ app.get('/isFollowing', async (req, res, next) => {
 });
 app.listen(PORT, () => {
   console.log('Listening at port: ', PORT);
+  Moralis.start({
+    apiKey: process.env.MORALIS_API_KEY
+  });
 });
