@@ -864,7 +864,7 @@ app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (re
 });
 
 app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, next) => {
-  let { profileId, posterProfileId, collectModule } = req.body;
+  let { profileId, posterProfileId, collectModule, contentURI } = req.body;
   let { address } = res.locals.jwtDecoded;
   let { accessToken } = parseTokens();
 
@@ -904,52 +904,52 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
 
   if (walletSatisfiesConditions) {
     // post
-    let contentMetadata = {
-      version: '2.0.0',
-      metadata_id: v4(),
-      description: '',
-      content:
-        'about optimizations on LensTube, how well the videos load for you? Vote below and share more ideas to make LensTube more epic ✨🙏\n\n1 = fast\n2 = not fast enough',
-      locale: 'en-US',
-      // tags: ,
-      // contentWarning:
-      mainContentFocus: 'TEXT_ONLY',
-      name: 'Comment by @youmemeworld.lens',
-      // add an extra attribute of postedBy to know who posted on which community.
-      attributes: [
-        // ...argsAttributes,
-        {
-          displayType: 'string',
-          traitType: 'type',
-          value: 'text_only'
-        },
-        {
-          displayType: 'string',
-          traitType: 'postedBy',
-          value: address
-        },
-        {
-          displayType: 'string',
-          traitType: 'postedByHandle',
-          value: posterProfile.handle
-        },
-        {
-          displayType: 'string',
-          traitType: 'postedByProfileId',
-          value: posterProfile.id
-        }
-      ],
-      image: 'ipfs://bafkreih5usbykwf7eunzehikrmgy4oidv4w67cb7coyc2hhzlsgou3ur34',
-      // media: [
-      //     {
-      //         item: "ipfs://bafybeihl6tle6ykrostimuemogf7ei2sprugp6qdsfrmdyq3hcunasd4qi",
-      //     },
+    // let contentMetadata = {
+    //   version: '2.0.0',
+    //   metadata_id: v4(),
+    //   description: '',
+    //   content:
+    //     'about optimizations on LensTube, how well the videos load for you? Vote below and share more ideas to make LensTube more epic ✨🙏\n\n1 = fast\n2 = not fast enough',
+    //   locale: 'en-US',
+    //   // tags: ,
+    //   // contentWarning:
+    //   mainContentFocus: 'TEXT_ONLY',
+    //   name: 'Comment by @youmemeworld.lens',
+    //   // add an extra attribute of postedBy to know who posted on which community.
+    //   attributes: [
+    //     // ...argsAttributes,
+    //     {
+    //       displayType: 'string',
+    //       traitType: 'type',
+    //       value: 'text_only'
+    //     },
+    //     {
+    //       displayType: 'string',
+    //       traitType: 'postedBy',
+    //       value: address
+    //     },
+    //     {
+    //       displayType: 'string',
+    //       traitType: 'postedByHandle',
+    //       value: posterProfile.handle
+    //     },
+    //     {
+    //       displayType: 'string',
+    //       traitType: 'postedByProfileId',
+    //       value: posterProfile.id
+    //     }
+    //   ],
+    //   image: 'ipfs://bafkreih5usbykwf7eunzehikrmgy4oidv4w67cb7coyc2hhzlsgou3ur34',
+    //   // media: [
+    //   //     {
+    //   //         item: "ipfs://bafybeihl6tle6ykrostimuemogf7ei2sprugp6qdsfrmdyq3hcunasd4qi",
+    //   //     },
 
-      // ],
-      appId: 'lensparty'
-    };
+    //   // ],
+    //   appId: 'lensparty'
+    // };
 
-    let contentURI = await uploadToIpfs(`post_by_@${posterProfile.handle}`, contentMetadata);
+    // let contentURI = await uploadToIpfs(`post_by_@${posterProfile.handle}`, contentMetadata);
 
     let createPostTypedDataResponse = await axios({
       url: API_URL,
