@@ -1,6 +1,12 @@
+import NewPost from '@components/Composer/Post/New';
+import CreatePostForm from '@components/CreatePost/CreatePostForm';
 import { GridItemEight, GridItemFour, GridLayout } from '@components/UI/GridLayout';
+import { Modal } from '@components/UI/Modal';
 import MetaTags from '@components/utils/MetaTags';
+import { UsersIcon } from '@heroicons/react/outline';
+import getProfileType from '@lib/getProfileType';
 import { APP_NAME } from 'data/constants';
+import type { Profile } from 'lens';
 import { useProfileQuery } from 'lens';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -9,6 +15,7 @@ import Custom404 from 'src/pages/404';
 import Custom500 from 'src/pages/500';
 import { useAppStore } from 'src/store/app';
 import { useProfileTabStore } from 'src/store/profile-tab';
+import type { ProfileType } from 'src/store/profile-type';
 import { useProfileTypeStore } from 'src/store/profile-type';
 
 import AllowanceSettings from './Allowance';
@@ -20,9 +27,13 @@ import NFTFeed from './NFTFeed';
 import EditProfile from './Profile';
 import ProfilePageShimmer from './Shimmer';
 
-const ViewProfile: NextPage = () => {
-  const profileType = useProfileTypeStore((state) => state.profileType);
+type Props = {
+  isCommunity?: boolean;
+};
+
+const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
   const setProfileType = useProfileTypeStore((state) => state.setProfileType);
+  const [showNewPostModal, setShowNewPostModal] = useState(false);
 
   const {
     query: { username, type }
@@ -54,24 +65,48 @@ const ViewProfile: NextPage = () => {
   }
 
   const profile = data?.profile;
-  let attributes = profile.attributes;
 
-  let profileTypeAttribute = attributes?.filter((attribute) => attribute.key === 'profileType');
-  setProfileType(profileTypeAttribute && profileTypeAttribute?.length > 0 ? 'COMMUNITY' : 'USER');
+  if (
+    (isCommunity && getProfileType(data?.profile as Profile) !== 'COMMUNITY') ||
+    (!isCommunity && getProfileType(data?.profile as Profile) === 'COMMUNITY')
+  ) {
+    return <Custom404 />;
+  }
+  setProfileType(getProfileType(data?.profile as Profile) as ProfileType);
 
   const renderTab = () => {
-    console.log('currTab', currTab);
     switch (currTab) {
       case 'PROFILE':
         return (
           <>
-            {profileType === 'USER' && (
+            {getProfileType(data?.profile as Profile) === 'USER' && (
               <FeedType stats={profile?.stats as any} setFeedType={setFeedType} feedType={feedType} />
             )}
+
             {(feedType === 'FEED' || feedType === 'REPLIES' || feedType === 'MEDIA') && (
-              <Feed profile={profile as any} type={profileType === 'COMMUNITY' ? 'FEED' : feedType} />
+              <>
+                {data?.profile?.isFollowedByMe && (
+                  <>
+                    <NewPost />
+                    <Modal
+                      title="Followers you know"
+                      icon={<UsersIcon className="w-5 h-5 text-brand" />}
+                      show={showNewPostModal}
+                      onClose={() => setShowNewPostModal(false)}
+                    >
+                      <CreatePostForm forCommunity />
+                    </Modal>
+                  </>
+                )}
+                <Feed
+                  profile={profile as any}
+                  type={getProfileType(data?.profile as Profile) === 'COMMUNITY' ? 'FEED' : feedType}
+                />
+              </>
             )}
-            {profileType === 'USER' && feedType === 'NFT' && <NFTFeed profile={profile as any} />}
+            {getProfileType(data?.profile as Profile) === 'USER' && feedType === 'NFT' && (
+              <NFTFeed profile={profile as any} />
+            )}
           </>
         );
       case 'EDITPROFILE':

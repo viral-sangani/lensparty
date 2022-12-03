@@ -380,7 +380,6 @@ const hasTxBeenIndexed = async (accessToken, txHash) => {
   });
 
   const result = transactionIndexedResponse.data;
-
   return result.data.hasTxHashBeenIndexed;
 };
 

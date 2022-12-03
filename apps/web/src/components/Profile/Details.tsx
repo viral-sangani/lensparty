@@ -1,5 +1,5 @@
 /* eslint-disable simple-import-sort/imports */
-import Message from '@components/Profile/Message';
+import Badge from '@components/Shared/Badges';
 import Follow from '@components/Shared/Follow';
 import Markup from '@components/Shared/Markup';
 import Slug from '@components/Shared/Slug';
@@ -8,19 +8,17 @@ import Unfollow from '@components/Shared/Unfollow';
 import { Modal } from '@components/UI/Modal';
 import { Tooltip } from '@components/UI/Tooltip';
 import { HashtagIcon, LocationMarkerIcon, UsersIcon } from '@heroicons/react/outline';
-import buildConversationId from '@lib/buildConversationId';
-import { buildConversationKey } from '@lib/conversationKey';
 import formatAddress from '@lib/formatAddress';
 import getAttribute from '@lib/getAttribute';
 import getAvatar from '@lib/getAvatar';
+import getProfileType from '@lib/getProfileType';
 import { STATIC_IMAGES_URL } from 'data/constants';
 import type { Profile } from 'lens';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/router';
 import type { FC, ReactElement } from 'react';
 import { useState } from 'react';
 import { useAppStore } from 'src/store/app';
-import { useMessageStore } from 'src/store/message';
+import { useProfileTypeStore } from 'src/store/profile-type';
 import Followerings from './Followerings';
 import MutualFollowers from './MutualFollowers';
 import MutualFollowersList from './MutualFollowers/List';
@@ -32,21 +30,13 @@ interface Props {
 
 const Details: FC<Props> = ({ profile }) => {
   const currentProfile = useAppStore((state) => state.currentProfile);
+  const profileType = useProfileTypeStore((state) => state.profileType);
   const [following, setFollowing] = useState(profile?.isFollowedByMe);
   const [showMutualFollowersModal, setShowMutualFollowersModal] = useState(false);
   const { resolvedTheme } = useTheme();
-  const router = useRouter();
-  const addProfileAndSelectTab = useMessageStore((state) => state.addProfileAndSelectTab);
 
-  const onMessageClick = () => {
-    if (!currentProfile) {
-      return;
-    }
-    const conversationId = buildConversationId(currentProfile.id, profile.id);
-    const conversationKey = buildConversationKey(profile.ownedBy, conversationId);
-    addProfileAndSelectTab(conversationKey, profile);
-    router.push(`/messages/${conversationKey}`);
-  };
+  console.log('profile.attributes', getAttribute(profile.attributes, 'profileCreator'));
+  console.log('current', currentProfile?.ownedBy);
 
   const MetaDetails = ({ children, icon }: { children: ReactElement; icon: ReactElement }) => (
     <div className="flex gap-2 items-center">
@@ -71,10 +61,15 @@ const Details: FC<Props> = ({ profile }) => {
           <div className="py-2 flex flex-col space-y-0">
             <div className="flex gap-1 items-center text-2xl font-bold">
               <div className="truncate">{profile?.name ?? profile?.handle}</div>
+              {profileType === 'COMMUNITY' && <Badge title={profileType} />}
             </div>
             <div className="flex items-center space-x-3">
               {profile?.name ? (
-                <Slug className="text-sm sm:text-base" slug={profile?.handle} prefix="@" />
+                <Slug
+                  className="text-sm sm:text-base"
+                  slug={profile?.handle}
+                  prefix={profileType === 'COMMUNITY' ? 'c/' : 'u/'}
+                />
               ) : (
                 <Slug className="text-sm sm:text-base" slug={formatAddress(profile?.ownedBy)} />
               )}
@@ -97,32 +92,34 @@ const Details: FC<Props> = ({ profile }) => {
 
       <div className="space-y-5">
         <div>
-          {currentProfile?.id === profile?.id ? (
-            <>
-              <div className="w-full divider mb-4" />
-              <ProfileSidebar className="hidden md:block" />
-            </>
-          ) : followType !== 'RevertFollowModuleSettings' ? (
+          {(getProfileType(profile) === 'USER' && profile.id !== currentProfile?.id) ||
+          (getProfileType(profile) === 'COMMUNITY' && followType !== 'RevertFollowModuleSettings') ? (
             following ? (
               <div className="flex space-x-2">
                 <Unfollow profile={profile} setFollowing={setFollowing} showText />
                 {followType === 'FeeFollowModuleSettings' && (
                   <SuperFollow profile={profile} setFollowing={setFollowing} again />
                 )}
-                {currentProfile && <Message onClick={onMessageClick} />}
               </div>
             ) : followType === 'FeeFollowModuleSettings' ? (
               <div className="flex space-x-2">
                 <SuperFollow profile={profile} setFollowing={setFollowing} showText />
-                {currentProfile && <Message onClick={onMessageClick} />}
               </div>
             ) : (
               <div className="flex space-x-2">
                 <Follow profile={profile} setFollowing={setFollowing} showText />
-                {currentProfile && <Message onClick={onMessageClick} />}
               </div>
             )
           ) : null}
+          {currentProfile?.id === profile?.id ||
+          currentProfile?.ownedBy === getAttribute(profile.attributes, 'profileCreator') ? (
+            <>
+              <div className="w-full divider my-4" />
+              <ProfileSidebar className="hidden md:block" />
+            </>
+          ) : (
+            <div />
+          )}
         </div>
         {currentProfile?.id !== profile?.id && (
           <>
