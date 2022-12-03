@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const PushAPI = require('@pushprotocol/restapi');
 const bodyParser = require('body-parser');
+const { Revise } = require('revise-sdk');
 
 const API_URL = 'https://api-mumbai.lens.dev';
 const PORT = 3001;
@@ -672,19 +673,24 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
 
   let { address } = res.locals.jwtDecoded;
 
-  console.log(followModule);
+  const revise = new Revise({
+    auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMWZjMTcwLTllZWQtNDU4OC05MzUwLWM0M2VlOGU4NmU0OSIsImtleSI6ImUyczMyNzh4IiwiaWF0IjoxNjcwMDU5NDI0fQ.r5_qRwXyvizqQDEnVNmB4997LtJ7ccf3v3UH2zIBG-o'
+  });
+
+  // revise dynamic nft
+  const newNFT = await revise.addNFT(
+    {
+      name: `${handle}'s follow nft`,
+      image: `https://picsum.photos/id/0/200`,
+      tokenId: v4()
+    },
+    [{ posts: 0 }]
+  );
 
   let profileRequest = {
     handle,
     profilePictureUri,
-    // followNFTURI,
-    // feeFollowModule: {
-    //   amount: {
-    //     currency: '0xD40282e050723Ae26Aeb0F77022dB14470f4e011',
-    //     value: '0.01'
-    //   },
-    //   recipient: '0xEEA0C1f5ab0159dba749Dc0BAee462E5e293daaF'
-    // }
+    followNFTURI: `https://revise.link/${newNFT.createdNftId}`,
     followModule:
       followModule !== null
         ? followModule
@@ -748,6 +754,11 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
             key: 'profileCreator',
             value: address
           },
+          {
+            traitType: 'string',
+            key: 'followNFTId',
+            value: newNFT.createdNftId
+          },
           nftCollection !== null
             ? {
                 displayType: 'string',
@@ -804,7 +815,7 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
 });
 
 app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (req, res, next) => {
-  let { profileId } = req.query;
+  let { profileId, metadata } = req.body;
   let { accessToken } = parseTokens();
 
   let { address } = res.locals.jwtDecoded;
@@ -812,27 +823,27 @@ app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (re
   let attributes = await getProfileAttribute(profileId, 'profileCreator');
 
   if (attributes[0].value === address) {
-    let metadata = await uploadToIpfs(`${profileId}.json`, {
-      name: 'stani',
-      bio: 'test stani',
-      cover_picture: null,
-      attributes: [
-        {
-          displayType: 'number',
-          traitType: 'nft',
-          key: '0x60ae865ee4c725cd04353b5aab364553f56cef82',
-          value: 1
-        },
-        {
-          traitType: 'string',
-          key: 'profileCreator',
-          value: address
-        }
-      ],
-      version: '1.0.0',
-      metadata_id: v4(),
-      appId: 'lenssomething'
-    });
+    // let metadata = await uploadToIpfs(`${profileId}.json`, {
+    //   name: 'stani',
+    //   bio: 'test stani',
+    //   cover_picture: null,
+    //   attributes: [
+    //     {
+    //       displayType: 'number',
+    //       traitType: 'nft',
+    //       key: '0x60ae865ee4c725cd04353b5aab364553f56cef82',
+    //       value: 1
+    //     },
+    //     {
+    //       traitType: 'string',
+    //       key: 'profileCreator',
+    //       value: address
+    //     }
+    //   ],
+    //   version: '1.0.0',
+    //   metadata_id: v4(),
+    //   appId: 'lenssomething'
+    // });
 
     let setMetadataResponse = await axios({
       url: API_URL,
@@ -886,6 +897,8 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
 
   // get conditions to post
   let conditions = profile.attributes.filter((attribute) => attribute.traitType == 'nft');
+  let reviseNFTId = profile.attributes.filter((attribute) => attribute.key == 'followNFTId');
+
   let walletSatisfiesConditions = false;
 
   if (conditions.length) {
@@ -1003,14 +1016,25 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
       createPostTypedDataResponse.data.data.createPostTypedData.id,
       signature
     );
+    const revise = new Revise({
+      auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMWZjMTcwLTllZWQtNDU4OC05MzUwLWM0M2VlOGU4NmU0OSIsImtleSI6ImUyczMyNzh4IiwiaWF0IjoxNjcwMDU5NDI0fQ.r5_qRwXyvizqQDEnVNmB4997LtJ7ccf3v3UH2zIBG-o'
+    });
+    let nft = await revise.fetchNFT(reviseNFTId[0].value);
+
+    let { metaData } = nft;
+    let posts = metaData.filter((prop) => Object.keys(prop).includes('posts'));
+
+    let result = await revise
+      .nft(nft)
+      .setImage(`https://picsum.photos/id/${posts[0].posts + 1}/400`)
+      .setProperty('posts', posts[0].posts + 1)
+      .save();
 
     let { items } = await getProfileFollowers(profileId);
 
     let addressSet = items.map((follower) => {
       return `eip155:80001:${follower.wallet.address}`;
     });
-
-    console.log(addressSet);
 
     const wallet = new ethers.Wallet(process.env.PRIVATE_KEY);
 

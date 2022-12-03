@@ -48,7 +48,7 @@ const List: FC<Props> = ({ feedType }) => {
   // Variables
   const request = {
     profileId: currentProfile?.id,
-    customFilters: [CustomFiltersTypes.Gardeners],
+    // customFilters: [CustomFiltersTypes.Gardeners],
     notificationTypes: getNotificationType(),
     limit: 20
   };
