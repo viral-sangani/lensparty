@@ -874,15 +874,24 @@ app.post('/setProfileMetadata', authenticateMiddleWare, requiresToken, async (re
   }
 });
 
-app.post('/coverPicture', authenticateMiddleWare, requiresToken, async (req, res, next) => {
+app.post('/coverPicture', authenticateMiddleWare, async (req, res, next) => {
   let { profileId, cover_picture } = req.body;
   let { accessToken } = await parseTokens();
 
   let profile = await getProfileUsingProfileId(profileId);
 
-  let { metadata } = profile;
+  let { metadata: metadataUrl } = profile;
 
-  let finalMetadata = { ...metadata, cover_picture };
+  let { data: metadata } = await axios.get(metadataUrl, {
+    headers: {
+      'Accept-Encoding': 'application/json'
+    }
+  });
+
+  console.log(metadata);
+
+  console.log({ ...metadata, cover_picture });
+  let finalMetadata = await uploadToIpfs(`${v4()}.json`, { ...metadata, cover_picture });
 
   let setMetadataResponse = await axios({
     url: API_URL,
