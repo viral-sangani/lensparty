@@ -9,11 +9,13 @@ import { TextArea } from '@components/UI/TextArea';
 import useBroadcast from '@components/utils/hooks/useBroadcast';
 import { PencilIcon } from '@heroicons/react/outline';
 import getAttribute from '@lib/getAttribute';
+import getProfileType from '@lib/getProfileType';
 import getSignature from '@lib/getSignature';
 import onError from '@lib/onError';
 import splitSignature from '@lib/splitSignature';
 import uploadToArweave from '@lib/uploadToArweave';
 import { LensPeriphery } from 'abis';
+import axios from 'axios';
 import { APP_NAME, LENS_PERIPHERY, RELAY_ON, SIGN_WALLET, URL_REGEX } from 'data/constants';
 import type { CreatePublicSetProfileMetadataUriRequest, MediaSet } from 'lens';
 import {
@@ -46,6 +48,9 @@ const Profile: FC<Props> = ({ profile }) => {
   const currentProfile = useAppStore((state) => state.currentProfile);
   const [cover, setCover] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const profileType = getProfileType(profile);
+  const [tx, setTx] = useState();
+  const [isIndexing, setIsIndexing] = useState(false);
 
   const onCompleted = () => {
     toast.success('Profile updated successfully!');
@@ -140,45 +145,63 @@ const Profile: FC<Props> = ({ profile }) => {
     if (!currentProfile) {
       return toast.error(SIGN_WALLET);
     }
-
     setIsUploading(true);
-    const id = await uploadToArweave({
+    const reqObj = {
       name,
       bio,
       cover_picture: cover ? cover : null,
       attributes: [
         { traitType: 'string', key: 'website', value: website },
-        { traitType: 'string', key: 'twitter', value: twitter },
-        { traitType: 'string', key: 'statusEmoji', value: getAttribute(profile?.attributes, 'statusEmoji') },
-        {
-          traitType: 'string',
-          key: 'statusMessage',
-          value: getAttribute(profile?.attributes, 'statusMessage')
-        },
-        { traitType: 'string', key: 'app', value: APP_NAME }
+        { traitType: 'string', key: 'twitter', value: twitter }
       ],
       version: '1.0.0',
       metadata_id: uuid(),
-      createdOn: new Date(),
       appId: APP_NAME
-    }).finally(() => setIsUploading(false));
-
-    const request = {
-      profileId: currentProfile?.id,
-      metadata: `https://arweave.net/${id}`
     };
 
-    if (currentProfile?.dispatcher?.canUseRelay) {
-      createViaDispatcher(request);
-    } else {
-      createSetProfileMetadataTypedData({
-        variables: { request }
+    if (profileType === 'COMMUNITY') {
+      console.log(`reqObj`);
+      console.log(profile.id);
+      console.log('localStorage', localStorage.getItem('accessToken'));
+
+      let createProfileResponse = await axios.post('http://localhost:3001/setProfileMetadata', {
+        profileId: profile.id,
+        lensToken: localStorage.getItem('accessToken'),
+        metadata: reqObj
       });
+      let tx = createProfileResponse.data.data.txHash;
+      setTx(tx);
+      setIsIndexing(true);
+      await axios.get(`http://localhost:3001/hastransactionbeenindexed?txHash=${tx}`);
+      setIsIndexing(false);
+      setIsUploading(false);
+    } else {
+      const id = await uploadToArweave(reqObj).finally(() => setIsUploading(false));
+
+      const request = {
+        profileId: currentProfile?.id,
+        metadata: `https://arweave.net/${id}`
+      };
+
+      if (currentProfile?.dispatcher?.canUseRelay) {
+        createViaDispatcher(request);
+      } else {
+        createSetProfileMetadataTypedData({
+          variables: { request }
+        });
+      }
     }
   };
 
   const isLoading =
-    isUploading || typedDataLoading || dispatcherLoading || signLoading || writeLoading || broadcastLoading;
+    isUploading ||
+    typedDataLoading ||
+    dispatcherLoading ||
+    signLoading ||
+    writeLoading ||
+    broadcastLoading ||
+    isIndexing;
+
   const txHash =
     writeData?.hash ??
     broadcastData?.broadcast?.txHash ??

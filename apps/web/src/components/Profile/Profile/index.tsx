@@ -16,7 +16,7 @@ type Props = {
 
 const EditProfile: NextPage<Props> = ({ profile }) => {
   const currentProfile = useAppStore((state) => state.currentProfile);
-  console.log('profile', profile?.handle);
+
   const { data, loading, error } = useProfileSettingsQuery({
     variables: { request: { profileId: profile ? profile.id : currentProfile?.id } },
     skip: !currentProfile?.id,
