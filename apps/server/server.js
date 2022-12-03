@@ -1189,7 +1189,7 @@ app.get('/svg/:post', async (req, res, next) => {
   res.send(`data:image/svg+xml;base64,${base64}`);
 });
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT, () => {
   console.log('Listening at port: ', PORT);
   Moralis.start({
     apiKey: process.env.MORALIS_API_KEY
