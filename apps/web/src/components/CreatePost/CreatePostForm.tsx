@@ -22,6 +22,7 @@ import getUserLocale from '@lib/getUserLocale';
 import onError from '@lib/onError';
 import trimify from '@lib/trimify';
 import uploadToArweave from '@lib/uploadToArweave';
+import axios from 'axios';
 import { ALLOWED_IMAGE_TYPES, ALLOWED_VIDEO_TYPES, APP_NAME, SIGN_WALLET } from 'data/constants';
 import type { Profile } from 'lens';
 import { PublicationMainFocus, ReferenceModules, useCreatePostViaDispatcherMutation } from 'lens';
@@ -41,7 +42,10 @@ interface Props {}
 
 const CreatePostForm: FC<Props> = () => {
   const profile = useCreatePostFormStore((state) => state.profile);
-  let forCommunity: boolean = getProfileType(profile as Profile) === 'COMMUNITY';
+  let forCommunity = false;
+  if (profile != null) {
+    forCommunity = getProfileType(profile as Profile) === 'COMMUNITY';
+  }
 
   const currentProfile = useAppStore((state) => state.currentProfile);
   const publicationContent = usePublicationStore((state) => state.publicationContent);
@@ -54,8 +58,9 @@ const CreatePostForm: FC<Props> = () => {
   const selectedReferenceModule = useReferenceModuleStore((state) => state.selectedReferenceModule);
   const onlyFollowers = useReferenceModuleStore((state) => state.onlyFollowers);
   const degreesOfSeparation = useReferenceModuleStore((state) => state.degreesOfSeparation);
+  const [title, setTitle] = useState('');
   const [txHash, setTxHash] = useState('');
-  const [isIndexing, setIsIndexing] = useState(false);
+  const setOpenModal = useCreatePostFormStore((state) => state.setOpenModal);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [publicationContentError, setPublicationContentError] = useState('');
@@ -103,6 +108,7 @@ const CreatePostForm: FC<Props> = () => {
     setPublicationContent('');
     setAttachments([]);
     resetCollectSettings();
+    setOpenModal(false);
   };
 
   const generateOptimisticPublication = ({ txHash, txId }: { txHash?: string; txId?: string }) => {
@@ -130,6 +136,7 @@ const CreatePostForm: FC<Props> = () => {
   });
 
   const createPublication = async () => {
+    setIsSubmitting(true);
     if (!currentProfile) {
       return toast.error(SIGN_WALLET);
     }
@@ -179,7 +186,7 @@ const CreatePostForm: FC<Props> = () => {
         external_url: `https://lensparty.xyz/u/${currentProfile?.handle}`,
         image: attachments.length > 0 ? attachments[0]?.item : textNftImageUrl,
         imageMimeType: attachments.length > 0 ? attachments[0]?.type : 'image/svg+xml',
-        name: `Posted by by u/${currentProfile?.handle} ${forCommunity && `in ${profile?.handle}`}`,
+        name: title,
         tags: getTags(publicationContent),
         animation_url: getAnimationUrl(),
         mainContentFocus: getMainContent(),
@@ -191,28 +198,17 @@ const CreatePostForm: FC<Props> = () => {
         appId: APP_NAME
       });
       if (forCommunity) {
-        console.log('Request', {
+        let createPostResponse = await axios.post('http://localhost:3001/createPost', {
           profileId: profile?.id,
           posterProfileId: currentProfile.id,
           collectModule: payload,
           lensToken: localStorage.getItem('accessToken'),
           contentURI: `https://arweave.net/${id}`
         });
-        // let createPostResponse = await axios.post('http://localhost:3001/createPost', {
-        //   profileId: profile?.id,
-        //   posterProfileId: currentProfile.id,
-        //   collectModule: payload,
-        //   lensToken: localStorage.getItem('lensToken'),
-        //   contentURI: `https://arweave.net/${id}`
-        // });
-        // console.log('createPostResponse.data', createPostResponse.data);
-        // let tx = createPostResponse.data.data.txHash;
-        // setTxHash(tx);
-        // setIsIndexing(true);
-        // console.log('WAITING...');
-        // await axios.get(`http://localhost:3001/hastransactionbeenindexed?txHash=${tx}`);
-        // setIsIndexing(false);
-        // console.log('DOME...');
+        let tx = createPostResponse.data.data.txHash;
+        setTxHash(tx);
+        setTxnQueue([generateOptimisticPublication({ txId: tx }), ...txnQueue]);
+        onCompleted();
       } else {
         const request = {
           profileId: currentProfile?.id,
@@ -245,7 +241,17 @@ const CreatePostForm: FC<Props> = () => {
         <span className="text-2xl">Create Post</span>
       </div>
       <div className="px-5 mt-3">
-        <Input label="Title" type="text" placeholder="EthIndia" />
+        <Input
+          name="title"
+          value={title}
+          onChange={(e) => {
+            e.preventDefault();
+            setTitle(e.target.value);
+          }}
+          label="Title"
+          type="text"
+          placeholder="EthIndia"
+        />
       </div>
       <div className="mx-5 my-5 order border border-gray-300 dark:border-gray-700/80 rounded-xl">
         <Editor />

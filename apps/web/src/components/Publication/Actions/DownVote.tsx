@@ -1,34 +1,108 @@
+import type { ApolloCache } from '@apollo/client';
 import type { LensPublication } from '@generated/types';
+import { ArrowSmDownIcon } from '@heroicons/react/solid';
+import { publicationKeyFields } from '@lib/keyFields';
+import onError from '@lib/onError';
+import { SIGN_WALLET } from 'data/constants';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { ReactionTypes, useAddReactionMutation, useRemoveReactionMutation } from 'lens';
+import { useRouter } from 'next/router';
 import type { FC } from 'react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useAppStore } from 'src/store/app';
 
 interface Props {
   publication: LensPublication;
   isFullPublication: boolean;
 }
 
-const DownVote: FC<Props> = ({ publication, isFullPublication }) => {
-  const iconClassName = isFullPublication ? 'w-[17px] sm:w-[20px]' : 'w-[15px] sm:w-[18px]';
+const DownVote: FC<Props> = ({ publication }) => {
+  const { pathname } = useRouter();
+  const isMirror = publication.__typename === 'Mirror';
+  const currentProfile = useAppStore((state) => state.currentProfile);
+  const [downvoted, setDownvoted] = useState(
+    (isMirror ? publication?.mirrorOf?.reaction : publication?.reaction) === 'UPVOTE'
+  );
+  console.log('publication?.stats?.totalDownvotes', publication?.stats);
+  const [count, setCount] = useState(
+    isMirror ? publication?.mirrorOf?.stats?.totalDownvotes : publication?.stats?.totalDownvotes
+  );
+
+  const updateCache = (cache: ApolloCache<any>, type: ReactionTypes.Upvote | ReactionTypes.Downvote) => {
+    if (pathname === '/posts/[id]') {
+      cache.modify({
+        id: publicationKeyFields(isMirror ? publication?.mirrorOf : publication),
+        fields: {
+          stats: (stats) => ({
+            ...stats,
+            totalUpvotes: type === ReactionTypes.Upvote ? stats.totalUpvotes + 1 : stats.totalUpvotes - 1
+          })
+        }
+      });
+    }
+  };
+
+  const [addReaction] = useAddReactionMutation({
+    onCompleted: () => {},
+    onError: (error) => {
+      setDownvoted(!downvoted);
+      setCount(count - 1);
+      onError(error);
+    },
+    update: (cache) => updateCache(cache, ReactionTypes.Upvote)
+  });
+
+  const [removeReaction] = useRemoveReactionMutation({
+    onCompleted: () => {},
+    onError: (error) => {
+      setDownvoted(!downvoted);
+      setCount(count + 1);
+      onError(error);
+    },
+    update: (cache) => updateCache(cache, ReactionTypes.Downvote)
+  });
+
+  const createDownvote = () => {
+    if (!currentProfile) {
+      return toast.error(SIGN_WALLET);
+    }
+
+    const variable = {
+      variables: {
+        request: {
+          profileId: currentProfile?.id,
+          reaction: ReactionTypes.Upvote,
+          publicationId: publication.__typename === 'Mirror' ? publication?.mirrorOf?.id : publication?.id
+        }
+      }
+    };
+
+    if (downvoted) {
+      setDownvoted(false);
+      setCount(count - 1);
+      removeReaction(variable);
+    } else {
+      setDownvoted(true);
+      setCount(count + 1);
+      addReaction(variable);
+    }
+  };
 
   return (
-    <motion.button whileTap={{ scale: 0.9 }} aria-label="DownVote">
-      <Link href={`/posts/${publication.id}`}>
-        <span className="flex items-center space-x-2 dark:text-gray-400 text-gray-500 hover:bg-blue-300 hover:bg-opacity-20 px-2 py-1 rounded-xl">
+    <motion.button whileTap={{ scale: 0.9 }} onClick={createDownvote} aria-label="DownVote">
+      <span
+        className={`flex items-center space-x-2 dark:text-gray-400 text-gray-500 hover:bg-blue-300 hover:bg-opacity-20 px-2 py-1 rounded-xl ${
+          downvoted ? 'text-red-600' : 'text-gray-500'
+        }`}
+      >
+        <span className="">
           <span className="">
-            <svg
-              width="24px"
-              height="24px"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-              className={`fill-current ${iconClassName}`}
-            >
-              <path d="M20.901 10.566A1.001 1.001 0 0 0 20 10h-4V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v7H4a1.001 1.001 0 0 0-.781 1.625l8 10a1 1 0 0 0 1.562 0l8-10c.24-.301.286-.712.12-1.059zM12 19.399 6.081 12H10V4h4v8h3.919L12 19.399z" />
-            </svg>
+            <ArrowSmDownIcon className={`w-7 h-7 ${downvoted ? 'text-red-500' : 'text-gray-500'}`} />
           </span>
-          <span className="text-[11px] sm:text-xs">{89}</span>
         </span>
-      </Link>
+        <span className="text-[11px] sm:text-sm">{count}</span>
+      </span>
     </motion.button>
   );
 };

@@ -1,47 +1,25 @@
 import CreatePostForm from '@components/CreatePost/CreatePostForm';
 import { Card } from '@components/UI/Card';
 import { Modal } from '@components/UI/Modal';
-import { Tooltip } from '@components/UI/Tooltip';
 import { PencilAltIcon } from '@heroicons/react/outline';
 import getAvatar from '@lib/getAvatar';
+import type { Profile } from 'lens';
 import { useRouter } from 'next/router';
-import type { FC, ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useEffect } from 'react';
 import { useAppStore } from 'src/store/app';
+import { useCreatePostFormStore } from 'src/store/create-post-form';
 import { usePublicationStore } from 'src/store/publication';
-
-type Action = 'update' | 'image' | 'video' | 'audio' | 'article';
-
-interface ActionProps {
-  icon: ReactNode;
-  text: string;
-  onClick: () => void;
-}
-
-const Action: FC<ActionProps> = ({ icon, text, onClick }) => (
-  <Tooltip content={text} placement="top">
-    <button
-      className="flex flex-col items-center text-gray-500 hover:text-brand-500"
-      onClick={onClick}
-      type="button"
-    >
-      {icon}
-    </button>
-  </Tooltip>
-);
 
 const NewPost: FC = () => {
   const { query, isReady } = useRouter();
   const currentProfile = useAppStore((state) => state.currentProfile);
-  const showNewPostModal = usePublicationStore((state) => state.showNewPostModal);
   const setShowNewPostModal = usePublicationStore((state) => state.setShowNewPostModal);
   const setPublicationContent = usePublicationStore((state) => state.setPublicationContent);
-  const [selectedAction, setSelectedAction] = useState<Action>('update');
-
-  const openModal = (action: Action) => {
-    setSelectedAction(action);
-    setShowNewPostModal(true);
-  };
+  const setProfile = useCreatePostFormStore((state) => state.setProfile);
+  const openModal = useCreatePostFormStore((state) => state.openModal);
+  const setOpenModal = useCreatePostFormStore((state) => state.setOpenModal);
+  setProfile(currentProfile as Profile);
 
   useEffect(() => {
     if (isReady && query.text) {
@@ -70,7 +48,7 @@ const NewPost: FC = () => {
       <button
         className="rounded-xl px-5 py-3 space-y-2 w-full flex items-center space-x-3 bg-white hover:bg-gray-100 dark:bg-gray-800 hover:dark:bg-gray-900"
         type="button"
-        onClick={() => openModal('update')}
+        onClick={() => setOpenModal(true)}
       >
         <div className="flex items-center space-x-3">
           <img
@@ -82,8 +60,8 @@ const NewPost: FC = () => {
           <span className="dark:text-gray-100 text-black">What's up?</span>
         </div>
       </button>
-      <Modal title="Create post" size="md" show={showNewPostModal} onClose={() => setShowNewPostModal(false)}>
-        {selectedAction === 'update' && <CreatePostForm />}
+      <Modal title="Create post" size="md" show={openModal} onClose={() => setOpenModal(false)}>
+        {<CreatePostForm />}
       </Modal>
     </Card>
   );

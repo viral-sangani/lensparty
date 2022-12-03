@@ -1,8 +1,6 @@
 import type { ComponentProps } from 'react';
 import { forwardRef, useId } from 'react';
 
-import { FieldError } from './Form';
-
 interface Props extends ComponentProps<'textarea'> {
   label?: string;
 }
@@ -19,7 +17,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, Props>(function TextArea
         ref={ref}
         {...props}
       />
-      {props.name && <FieldError name={props.name} />}
+      {/* {props.name && <FieldError name={props.name} />} */}
     </label>
   );
 });

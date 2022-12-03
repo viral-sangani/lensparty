@@ -33,10 +33,11 @@ type Props = {
 };
 
 const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
-  console.log('isCommunity', isCommunity);
   const setProfileType = useProfileTypeStore((state) => state.setProfileType);
-  const [showNewPostModal, setShowNewPostModal] = useState(false);
+  const openModal = useCreatePostFormStore((state) => state.openModal);
+  const setOpenModal = useCreatePostFormStore((state) => state.setOpenModal);
   const setProfile = useCreatePostFormStore((state) => state.setProfile);
+
   const {
     query: { username, type }
   } = useRouter();
@@ -75,7 +76,6 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
     return <Custom404 />;
   }
   setProfileType(getProfileType(data?.profile as Profile) as ProfileType);
-
   const renderTab = () => {
     switch (currTab) {
       case 'PROFILE':
@@ -93,10 +93,10 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
                     <Modal
                       title="Followers you know"
                       icon={<UsersIcon className="w-5 h-5 text-brand" />}
-                      show={showNewPostModal}
-                      onClose={() => setShowNewPostModal(false)}
+                      show={openModal}
+                      onClose={() => setOpenModal(false)}
                     >
-                      <CreatePostForm forCommunity={isCommunity} profile={data.profile as Profile} />
+                      <CreatePostForm />
                     </Modal>
                   </>
                 )}
