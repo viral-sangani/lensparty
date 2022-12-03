@@ -687,7 +687,8 @@ app.use(cors());
 
 app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, res, next) => {
   let { accessToken } = parseTokens();
-  let { handle, profilePictureUri, followNFTURI, followModule, bio } = req.query;
+  let { handle, profilePictureUri, followNFTURI, bio } = req.query;
+  let { followModule } = req.body;
 
   let { address } = res.locals.jwtDecoded;
 
@@ -702,9 +703,18 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
             handle,
             profilePictureUri,
             // followNFTURI,
-            followModule: {
-              freeFollowModule: true
-            }
+            // feeFollowModule: {
+            //   amount: {
+            //     currency: '0xD40282e050723Ae26Aeb0F77022dB14470f4e011',
+            //     value: '0.01'
+            //   },
+            //   recipient: '0xEEA0C1f5ab0159dba749Dc0BAee462E5e293daaF'
+            // }
+            followModule: followModule
+              ? followModule
+              : {
+                  freeFollowModule: true
+                }
           }
         }
       },
