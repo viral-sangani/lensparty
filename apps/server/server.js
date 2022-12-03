@@ -687,8 +687,8 @@ app.use(cors());
 
 app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, res, next) => {
   let { accessToken } = parseTokens();
-  let { handle, profilePictureUri, followNFTURI, bio } = req.query;
-  let { followModule } = req.body;
+
+  let { followModule, tag, handle, profilePictureUri, bio } = req.body;
 
   let { address } = res.locals.jwtDecoded;
 
