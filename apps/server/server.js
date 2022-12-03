@@ -672,6 +672,8 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
 
   let { address } = res.locals.jwtDecoded;
 
+  console.log(followModule);
+
   let profileRequest = {
     handle,
     profilePictureUri,
@@ -683,11 +685,12 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
     //   },
     //   recipient: '0xEEA0C1f5ab0159dba749Dc0BAee462E5e293daaF'
     // }
-    followModule: followModule
-      ? followModule
-      : {
-          freeFollowModule: true
-        }
+    followModule:
+      followModule !== null
+        ? followModule
+        : {
+            freeFollowModule: true
+          }
   };
 
   console.log(profileRequest);
@@ -747,13 +750,13 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
           },
           nftCollection !== null
             ? {
-                displayType: 'number',
+                displayType: 'string',
                 traitType: 'nft',
                 key: 'nftCollection',
                 value: nftCollection
               }
             : {
-                displayType: 'number',
+                displayType: 'string',
                 traitType: 'nft',
                 key: 'nftCollection',
                 value: ''
@@ -883,29 +886,33 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
 
   // get conditions to post
   let conditions = profile.attributes.filter((attribute) => attribute.traitType == 'nft');
-
-  let nftContractAddress = conditions[0].value;
-
-  // check if wallet meets the conditions to post
   let walletSatisfiesConditions = false;
 
-  if (nftContractAddress.length) {
-    let covalentResponse = await axios.get(
-      `https://api.covalenthq.com/v1/80001/address/${address}/balances_v2/?quote-currency=USD&format=JSON&nft=true&no-nft-fetch=false&key=ckey_95affad333ef43c4b70eb7a8278`,
-      {
-        headers: {
-          'Accept-Encoding': 'application/json'
+  if (conditions.length) {
+    let nftContractAddress = conditions[0].value;
+
+    // check if wallet meets the conditions to post
+
+    if (nftContractAddress.length) {
+      let covalentResponse = await axios.get(
+        `https://api.covalenthq.com/v1/80001/address/${address}/balances_v2/?quote-currency=USD&format=JSON&nft=true&no-nft-fetch=false&key=ckey_95affad333ef43c4b70eb7a8278`,
+        {
+          headers: {
+            'Accept-Encoding': 'application/json'
+          }
         }
+      );
+
+      let { items } = covalentResponse.data.data;
+
+      let conditionsMatch = items.filter((item) => {
+        return item.contract_address === nftContractAddress;
+      });
+
+      if (conditionsMatch.length > 0) {
+        walletSatisfiesConditions = true;
       }
-    );
-
-    let { items } = covalentResponse.data.data;
-
-    let conditionsMatch = items.filter((item) => {
-      return item.contract_address === nftContractAddress;
-    });
-
-    if (conditionsMatch.length > 0) {
+    } else {
       walletSatisfiesConditions = true;
     }
   } else {
