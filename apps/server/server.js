@@ -677,11 +677,19 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
     auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMWZjMTcwLTllZWQtNDU4OC05MzUwLWM0M2VlOGU4NmU0OSIsImtleSI6ImUyczMyNzh4IiwiaWF0IjoxNjcwMDU5NDI0fQ.r5_qRwXyvizqQDEnVNmB4997LtJ7ccf3v3UH2zIBG-o'
   });
 
+  let buffer = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="300" height="300" viewBox="0 0 1080 1080" xml:space="preserve"><desc>Created with Fabric.js 5.2.4</desc><defs></defs><g transform="matrix(1 0 0 1 540 540)" id="39f5007a-21e8-4579-9e06-ce979cc0e7fc"><rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="non-scaling-stroke" x="-540" y="-540" rx="0" ry="0" width="1080" height="1080"/></g><g transform="matrix(1 0 0 1 540 540)" id="b2eacb88-a819-474f-bc04-3fe88228955e"></g><g transform="matrix(1 0 0 1 540 835.7)" style="" id="41414c05-bea9-4bbb-b05a-6631c150ac8a"><text xml:space="preserve" font-family="Alegreya" font-size="80" font-style="normal" font-weight="700" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-88.24" y="25.13">Posts</tspan></text></g><g transform="matrix(1 0 0 1 540 462.78)" style="" id="e145f7c9-db59-40da-8538-af404c48ccd5"><text xml:space="preserve" font-family="Raleway" font-size="200" font-style="normal" font-weight="900" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-61.4" y="62.83">0</tspan></text></g></svg>`
+  );
+
+  let base64 = buffer.toString('base64');
+
+  let imageSvg = await uploadToIpfs(`${v4()}.json`, `data:image/svg+xml;base64,${base64}`);
+
   // revise dynamic nft
   const newNFT = await revise.addNFT(
     {
       name: `${handle}'s follow nft`,
-      image: `https://picsum.photos/id/0/200`,
+      image: `https://lensparty-production.up.railway.app/svg/0`,
       tokenId: v4()
     },
     [{ posts: 0 }]
@@ -1065,7 +1073,8 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
 
     let result = await revise
       .nft(nft)
-      .setImage(`https://picsum.photos/id/${posts[0].posts + 1}/400`)
+      // .setImage(`https://picsum.photos/id/${posts[0].posts + 1}/400`)
+      .setImage(`https://lensparty-production.up.railway.app/svg/${posts[0].posts + 1}`)
       .setProperty('posts', posts[0].posts + 1)
       .save();
 
@@ -1167,6 +1176,17 @@ app.get('/hastransactionbeenindexed', async (req, res, next) => {
   let result = await hasTxBeenIndexed(accessToken, txHash);
 
   res.status(200).json({ data: result });
+});
+
+app.get('/svg/:post', async (req, res, next) => {
+  let { post } = req.params.post;
+
+  let buffer = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="300" height="300" viewBox="0 0 1080 1080" xml:space="preserve"><desc>Created with Fabric.js 5.2.4</desc><defs></defs><g transform="matrix(1 0 0 1 540 540)" id="39f5007a-21e8-4579-9e06-ce979cc0e7fc"><rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="non-scaling-stroke" x="-540" y="-540" rx="0" ry="0" width="1080" height="1080"/></g><g transform="matrix(1 0 0 1 540 540)" id="b2eacb88-a819-474f-bc04-3fe88228955e"></g><g transform="matrix(1 0 0 1 540 835.7)" style="" id="41414c05-bea9-4bbb-b05a-6631c150ac8a"><text xml:space="preserve" font-family="Alegreya" font-size="80" font-style="normal" font-weight="700" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-88.24" y="25.13">Posts</tspan></text></g><g transform="matrix(1 0 0 1 540 462.78)" style="" id="e145f7c9-db59-40da-8538-af404c48ccd5"><text xml:space="preserve" font-family="Raleway" font-size="200" font-style="normal" font-weight="900" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-61.4" y="62.83">${post}</tspan></text></g></svg>`
+  );
+  let base64 = buffer.toString('base64');
+  console.log(`data:image/svg+xml;base64,${base64}`);
+  res.send(`data:image/svg+xml;base64,${base64}`);
 });
 
 app.listen(PORT, () => {
