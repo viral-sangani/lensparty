@@ -1,5 +1,6 @@
 import { Card } from '@components/UI/Card';
 import { PageLoading } from '@components/UI/PageLoading';
+import type { Profile as ProfileType } from 'lens';
 import { useProfileSettingsQuery } from 'lens';
 import type { NextPage } from 'next';
 import Custom404 from 'src/pages/404';
@@ -9,11 +10,15 @@ import { useAppStore } from 'src/store/app';
 import Picture from './Picture';
 import Profile from './Profile';
 
-const EditProfile: NextPage = () => {
-  const currentProfile = useAppStore((state) => state.currentProfile);
+type Props = {
+  profile?: ProfileType;
+};
 
+const EditProfile: NextPage<Props> = ({ profile }) => {
+  const currentProfile = useAppStore((state) => state.currentProfile);
+  console.log('profile', profile?.handle);
   const { data, loading, error } = useProfileSettingsQuery({
-    variables: { request: { profileId: currentProfile?.id } },
+    variables: { request: { profileId: profile ? profile.id : currentProfile?.id } },
     skip: !currentProfile?.id,
     onCompleted: (data) => {
       // @ts-ignore
@@ -33,14 +38,12 @@ const EditProfile: NextPage = () => {
     return <Custom404 />;
   }
 
-  const profile = data?.profile;
-
   return (
     <>
       <Card className="space-y-5 p-5">
-        <Picture profile={profile as any} />
+        <Picture profile={profile ?? (data?.profile as any)} />
       </Card>
-      <Profile profile={profile as any} />
+      <Profile profile={profile ?? (data?.profile as any)} />
     </>
   );
 };

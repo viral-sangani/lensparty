@@ -15,7 +15,7 @@ const Menu: FC<MenuProps> = ({ children, tab }) => {
     <div
       className={`${
         currTab === tab && 'bg-brand-100 text-brand font-bold'
-      } flex items-center space-x-3 rounded-lg px-3 py-2 hover:bg-brand-100 hover:text-brand dark:hover:bg-opacity-20 dark:bg-opacity-20 hover:bg-opacity-100`}
+      } cursor-pointer flex items-center space-x-3 rounded-lg px-3 py-2 hover:bg-brand-100 hover:text-brand dark:hover:bg-opacity-20 dark:bg-opacity-20 hover:bg-opacity-100`}
       onClick={(e) => {
         e.preventDefault();
         console.log('tab', tab);

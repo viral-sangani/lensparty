@@ -111,7 +111,15 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
           </>
         );
       case 'EDITPROFILE':
-        return <EditProfile />;
+        return (
+          <EditProfile
+            profile={
+              getProfileType(data?.profile as Profile) === 'COMMUNITY'
+                ? (data?.profile as Profile)
+                : undefined
+            }
+          />
+        );
       case 'INTERESTS':
         return <InterestsSettings />;
       case 'ALLOWANCE':

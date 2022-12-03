@@ -195,9 +195,9 @@ const Profile: FC<Props> = ({ profile }) => {
         }}
       >
         {error && <ErrorMessage className="mb-3" title="Transaction failed!" error={error} />}
-        <Input label="Profile Id" type="text" value={currentProfile?.id} disabled />
+        <Input label="Profile Id" type="text" value={profile?.id} disabled />
         <Input label="Name" type="text" placeholder="Gavin" {...form.register('name')} />
-        <Input label="Website" type="text" placeholder="https://hooli.com" {...form.register('website')} />
+        <Input label="Website" type="text" placeholder="https://ethindia.com" {...form.register('website')} />
         <Input
           label="Twitter"
           type="text"
