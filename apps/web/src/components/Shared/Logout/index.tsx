@@ -32,10 +32,10 @@ const Logout: FC = () => {
     <div className="p-5">
       <div className="space-y-5">
         <div className="space-y-1">
-          <div className="text-xl font-bold">Please sign the message.</div>
+          <div className="text-xl font-bold">Logging out from {APP_NAME}.</div>
           <div className="text-sm text-gray-500">
-            {APP_NAME} uses this signature to verify that you&rsquo;re the owner of this address.
-            <Button variant="super" onClick={logout}>
+            Sorry to hear that you are going. Come back soon. We miss you already.
+            <Button className="mt-4" variant="super" onClick={logout}>
               Logout
             </Button>
           </div>
