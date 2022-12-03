@@ -156,7 +156,7 @@ const Follow: FC<Props> = ({ profile, showText = false, setFollowing }) => {
       disabled={isLoading}
       icon={isLoading ? <Spinner variant="success" size="xs" /> : <UserAddIcon className="w-4 h-4" />}
     >
-      {showText && getProfileType(profile) === 'COMMUNITY' ? 'Join' : 'Follow'}
+      {showText ? (getProfileType(profile) === 'COMMUNITY' ? 'Join' : 'Follow') : ''}
     </Button>
   );
 };

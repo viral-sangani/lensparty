@@ -122,6 +122,12 @@ const Details: FC<Props> = ({ profile }) => {
               </div>
             )
           ) : null}
+          {/* <div className="flex">
+            <div className="flex flex-row space-x-2 bg-gray-700 px-3 py-1 rounded items-center cursor-pointer flex-shrink">
+              <BellIcon className="h-5 w-5 text-gray-200" />
+              <span>Receive Notification</span>
+            </div>
+          </div> */}
           {currentProfile?.id === profile?.id ||
           currentProfile?.ownedBy === getAttribute(profile.attributes, 'profileCreator') ? (
             <>

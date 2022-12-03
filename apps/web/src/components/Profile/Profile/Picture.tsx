@@ -6,12 +6,14 @@ import { Spinner } from '@components/UI/Spinner';
 import useBroadcast from '@components/utils/hooks/useBroadcast';
 import { PencilIcon } from '@heroicons/react/outline';
 import getIPFSLink from '@lib/getIPFSLink';
+import getProfileType from '@lib/getProfileType';
 import getSignature from '@lib/getSignature';
 import imageProxy from '@lib/imageProxy';
 import onError from '@lib/onError';
 import splitSignature from '@lib/splitSignature';
 import uploadToIPFS from '@lib/uploadToIPFS';
 import { LensHubProxy } from 'abis';
+import axios from 'axios';
 import { AVATAR, LENSHUB_PROXY, RELAY_ON, SIGN_WALLET } from 'data/constants';
 import type { MediaSet, NftImage, Profile, UpdateProfileImageRequest } from 'lens';
 import {
@@ -35,7 +37,7 @@ const Picture: FC<Props> = ({ profile }) => {
   const [avatar, setAvatar] = useState('');
   const [uploading, setUploading] = useState(false);
   const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({ onError });
-
+  const isCommunity = getProfileType(profile) === 'COMMUNITY';
   const onCompleted = () => {
     toast.success('Avatar updated successfully!');
   };
@@ -124,7 +126,7 @@ const Picture: FC<Props> = ({ profile }) => {
     }
   };
 
-  const editPicture = (avatar?: string) => {
+  const editPicture = async (avatar?: string) => {
     if (!currentProfile) {
       return toast.error(SIGN_WALLET);
     }
@@ -133,20 +135,30 @@ const Picture: FC<Props> = ({ profile }) => {
       return toast.error("Avatar can't be empty!");
     }
 
-    const request = {
-      profileId: currentProfile?.id,
-      url: avatar
-    };
-
-    if (currentProfile?.dispatcher?.canUseRelay) {
-      createViaDispatcher(request);
-    } else {
-      createSetProfileImageURITypedData({
-        variables: {
-          options: { overrideSigNonce: userSigNonce },
-          request
-        }
+    if (isCommunity) {
+      const res = await axios.post('http://localhost:3001/createPost', {
+        profileId: profile.id,
+        cover_picture: avatar,
+        lensToken: localStorage.getItem('accessToken')
       });
+      let tx = res.data.data.txHash;
+      console.log('res :>> ', res);
+    } else {
+      const request = {
+        profileId: currentProfile?.id,
+        url: avatar
+      };
+
+      if (currentProfile?.dispatcher?.canUseRelay) {
+        createViaDispatcher(request);
+      } else {
+        createSetProfileImageURITypedData({
+          variables: {
+            options: { overrideSigNonce: userSigNonce },
+            request
+          }
+        });
+      }
     }
   };
 

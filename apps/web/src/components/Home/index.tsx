@@ -14,6 +14,7 @@ import type { NextPage } from 'next';
 import { useAppStore } from 'src/store/app';
 
 import EnableDispatcher from './EnableDispatcher';
+import PopularCommunities from './PopularCommunities';
 import Timeline from './Timeline';
 
 const Home: NextPage = () => {
@@ -41,6 +42,7 @@ const Home: NextPage = () => {
               </GridItemEight>
               <GridItemFour>
                 {currentProfile ? <EnableDispatcher /> : null}
+                <PopularCommunities />
                 <Footer />
               </GridItemFour>
             </GridLayout>
