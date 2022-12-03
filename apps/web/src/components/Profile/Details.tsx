@@ -1,5 +1,4 @@
 /* eslint-disable simple-import-sort/imports */
-import Badge from '@components/Shared/Badges';
 import Follow from '@components/Shared/Follow';
 import Markup from '@components/Shared/Markup';
 import Slug from '@components/Shared/Slug';
@@ -34,9 +33,9 @@ const Details: FC<Props> = ({ profile }) => {
   const [following, setFollowing] = useState(profile?.isFollowedByMe);
   const [showMutualFollowersModal, setShowMutualFollowersModal] = useState(false);
   const { resolvedTheme } = useTheme();
-
-  console.log('profile.attributes', getAttribute(profile.attributes, 'profileCreator'));
-  console.log('current', currentProfile?.ownedBy);
+  const tags = getAttribute(profile.attributes, 'tags')
+    .split(',')
+    .filter((tag) => tag !== '');
 
   const MetaDetails = ({ children, icon }: { children: ReactElement; icon: ReactElement }) => (
     <div className="flex gap-2 items-center">
@@ -59,9 +58,8 @@ const Details: FC<Props> = ({ profile }) => {
         />
         <div className="flex flex-col">
           <div className="py-2 flex flex-col space-y-0">
-            <div className="flex gap-1 items-center text-2xl font-bold">
+            <div className="flex flex-col items-start gap-1 text-2xl font-bold">
               <div className="truncate">{profile?.name ?? profile?.handle}</div>
-              {profileType === 'COMMUNITY' && <Badge title={profileType} />}
             </div>
             <div className="flex items-center space-x-3">
               {profile?.name ? (
@@ -87,6 +85,19 @@ const Details: FC<Props> = ({ profile }) => {
       {profile?.bio && (
         <div className="mr-0 sm:mr-10 leading-md linkify text-md">
           <Markup>{profile?.bio}</Markup>
+        </div>
+      )}
+
+      {tags && tags.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <div
+              key={tag}
+              className="flex items-center gap-1 px-2 py-1 text-sm font-medium rounded-full bg-gray-100 dark:bg-gray-700"
+            >
+              <div className="truncate">#{tag}</div>
+            </div>
+          ))}
         </div>
       )}
 

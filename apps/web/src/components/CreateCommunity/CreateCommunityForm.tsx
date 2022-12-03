@@ -65,6 +65,8 @@ function CreateCommunityForm({}: Props) {
   });
 
   const createCommunity = async (name: string, bio: string) => {
+    console.log('tags', tags);
+    console.log('tags.join(', ')', tags.join(','));
     if (cover === '') {
       onError({
         message: 'Please add a profile image for your community'
@@ -94,7 +96,7 @@ function CreateCommunityForm({}: Props) {
           bio,
           lensToken: localStorage.getItem('accessToken'),
           // join tags and create a list
-          tag: tags ? tags.join(',') : '',
+          tags: tags ? tags.join(',') : null,
           feeFollowModule: collectFees
             ? {
                 amount: {
@@ -320,7 +322,7 @@ function CreateCommunityForm({}: Props) {
           >
             Create Community
           </Button>
-          {txHash ? <IndexStatus txHash={txHash} /> : null}
+          {isIndexing ? <IndexStatus txHash={txHash} /> : null}
         </div>
       </Form>
     </Card>
