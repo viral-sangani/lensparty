@@ -34,7 +34,11 @@ LensParty uses Covalent to check the NFT balances of a user requesting to partic
 
 #### Revise
 
-LensParty uses Revise Dynamic NFTs to give community followers a Dynamic NFT.
+LensParty uses Revise Dynamic NFTs to give community followers a Dynamic NFT. The Dynamic NFT basically shows the count of posts done by the community profile.
+
+In future, we can also store reputation of the community.
+
+Lens Protocol Follow NFT - 0x632b82897D1b2Ef3E16041Aff44FC81B32BA124D
 
 #### Push Protocol
 
