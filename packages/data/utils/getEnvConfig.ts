@@ -1,3 +1,4 @@
+import { SERVERLESS_TESTNET_API_URL } from './../constants';
 /* eslint-disable simple-import-sort/imports */
 import {
   LENS_NETWORK,
@@ -43,7 +44,7 @@ const getEnvConfig = () => {
     case 'testnet':
       return {
         apiEndpoint: TESTNET_API_URL,
-        serverlessEndpoint: SERVERLESS_DEVELOPMENT_API_URL,
+        serverlessEndpoint: SERVERLESS_TESTNET_API_URL,
         lensHubProxyAddress: TESTNET_LENSHUB_PROXY,
         lensPeripheryAddress: TESTNET_LENS_PERIPHERY,
         freeCollectModuleAddress: TESTNET_FREE_COLLECT_MODULE,
