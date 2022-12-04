@@ -674,9 +674,9 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
 
   // Revise Code
 
-  // const revise = new Revise({
-  //   auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMWZjMTcwLTllZWQtNDU4OC05MzUwLWM0M2VlOGU4NmU0OSIsImtleSI6IjR5bGRncnVtIiwiaWF0IjoxNjcwMTEyNzA5fQ.pIzgv1XEsSeUVUgPxO0TYjFsDnG7ODnBBn9kTxm1fic'
-  // });
+  const revise = new Revise({
+    auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMWZjMTcwLTllZWQtNDU4OC05MzUwLWM0M2VlOGU4NmU0OSIsImtleSI6IjR5bGRncnVtIiwiaWF0IjoxNjcwMTEyNzA5fQ.pIzgv1XEsSeUVUgPxO0TYjFsDnG7ODnBBn9kTxm1fic'
+  });
 
   // let buffer = Buffer.from(
   //   `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="300" height="300" viewBox="0 0 1080 1080" xml:space="preserve"><desc>Created with Fabric.js 5.2.4</desc><defs></defs><g transform="matrix(1 0 0 1 540 540)" id="39f5007a-21e8-4579-9e06-ce979cc0e7fc"><rect style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1; visibility: hidden;" vector-effect="non-scaling-stroke" x="-540" y="-540" rx="0" ry="0" width="1080" height="1080"/></g><g transform="matrix(1 0 0 1 540 540)" id="b2eacb88-a819-474f-bc04-3fe88228955e"></g><g transform="matrix(1 0 0 1 540 835.7)" style="" id="41414c05-bea9-4bbb-b05a-6631c150ac8a"><text xml:space="preserve" font-family="Alegreya" font-size="80" font-style="normal" font-weight="700" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-88.24" y="25.13">Posts</tspan></text></g><g transform="matrix(1 0 0 1 540 462.78)" style="" id="e145f7c9-db59-40da-8538-af404c48ccd5"><text xml:space="preserve" font-family="Raleway" font-size="200" font-style="normal" font-weight="900" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-61.4" y="62.83">0</tspan></text></g></svg>`
@@ -687,20 +687,21 @@ app.post('/createprofile', authenticateMiddleWare, requiresToken, async (req, re
   // let imageSvg = await uploadToIpfs(`${v4()}.json`, `data:image/svg+xml;base64,${base64}`);
 
   // revise dynamic nft
-  // const newNFT = await revise.addNFT(
-  //   {
-  //     name: `${handle}'s follow nft`,
-  //     image: 'https://picsum.photos/id/0/200',
-  //     tokenId: v4()
-  //   },
-  //   [{ posts: 0 }]
-  // );
+  const newNFT = await revise.addNFT(
+    {
+      name: `${handle}'s follow nft`,
+      image: `https://lensparty-production.up.railway.app/svg/0`,
+      // image: 'https://picsum.photos/id/0/200',
+      tokenId: v4()
+    },
+    [{ posts: 0 }]
+  );
 
   let profileRequest = {
     handle,
     profilePictureUri,
-    // followNFTURI: `https://revise.link/${newNFT.createdNftId}`,
-    followNFTURI: null,
+    followNFTURI: `https://revise.link/${newNFT.createdNftId}`,
+    // followNFTURI: null,
     followModule:
       followModule !== null
         ? followModule
@@ -1068,20 +1069,20 @@ app.post('/createpost', authenticateMiddleWare, requiresToken, async (req, res, 
 
     // Revise Code
 
-    // const revise = new Revise({
-    //   auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMWZjMTcwLTllZWQtNDU4OC05MzUwLWM0M2VlOGU4NmU0OSIsImtleSI6IjR5bGRncnVtIiwiaWF0IjoxNjcwMTEyNzA5fQ.pIzgv1XEsSeUVUgPxO0TYjFsDnG7ODnBBn9kTxm1fic'
-    // });
-    // let nft = await revise.fetchNFT(reviseNFTId[0].value);
+    const revise = new Revise({
+      auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMWZjMTcwLTllZWQtNDU4OC05MzUwLWM0M2VlOGU4NmU0OSIsImtleSI6IjR5bGRncnVtIiwiaWF0IjoxNjcwMTEyNzA5fQ.pIzgv1XEsSeUVUgPxO0TYjFsDnG7ODnBBn9kTxm1fic'
+    });
+    let nft = await revise.fetchNFT(reviseNFTId[0].value);
 
-    // let { metaData } = nft;
-    // let posts = metaData.filter((prop) => Object.keys(prop).includes('posts'));
+    let { metaData } = nft;
+    let posts = metaData.filter((prop) => Object.keys(prop).includes('posts'));
 
-    // let result = await revise
-    //   .nft(nft)
-    //   .setImage(`https://picsum.photos/id/${posts[0].posts + 1}/400`)
-    //   // .setImage(`https://lensparty-production.up.railway.app/svg/${posts[0].posts + 1}`)
-    //   .setProperty('posts', posts[0].posts + 1)
-    //   .save();
+    let result = await revise
+      .nft(nft)
+      // .setImage(`https://picsum.photos/id/${posts[0].posts + 1}/400`)
+      .setImage(`https://lensparty-production.up.railway.app/svg/${posts[0].posts + 1}`)
+      .setProperty('posts', posts[0].posts + 1)
+      .save();
 
     let { items } = await getProfileFollowers(profileId);
 
