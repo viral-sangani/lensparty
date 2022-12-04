@@ -3,7 +3,6 @@ import { Card } from '@components/UI/Card';
 import { Modal } from '@components/UI/Modal';
 import { PencilAltIcon } from '@heroicons/react/outline';
 import getAvatar from '@lib/getAvatar';
-import type { Profile } from 'lens';
 import { useRouter } from 'next/router';
 import type { FC } from 'react';
 import { useEffect } from 'react';
@@ -16,10 +15,10 @@ const NewPost: FC = () => {
   const currentProfile = useAppStore((state) => state.currentProfile);
   const setShowNewPostModal = usePublicationStore((state) => state.setShowNewPostModal);
   const setPublicationContent = usePublicationStore((state) => state.setPublicationContent);
-  const setProfile = useCreatePostFormStore((state) => state.setProfile);
   const openModal = useCreatePostFormStore((state) => state.openModal);
   const setOpenModal = useCreatePostFormStore((state) => state.setOpenModal);
-  setProfile(currentProfile as Profile);
+
+  // setProfile(currentProfile as Profile);
 
   useEffect(() => {
     if (isReady && query.text) {

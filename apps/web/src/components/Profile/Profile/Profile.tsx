@@ -16,7 +16,14 @@ import splitSignature from '@lib/splitSignature';
 import uploadToArweave from '@lib/uploadToArweave';
 import { LensPeriphery } from 'abis';
 import axios from 'axios';
-import { APP_NAME, LENS_PERIPHERY, RELAY_ON, SIGN_WALLET, URL_REGEX } from 'data/constants';
+import {
+  APP_NAME,
+  LENS_PERIPHERY,
+  RELAY_ON,
+  SERVER_API_ADDRESS,
+  SIGN_WALLET,
+  URL_REGEX
+} from 'data/constants';
 import type { CreatePublicSetProfileMetadataUriRequest, MediaSet } from 'lens';
 import {
   Profile,
@@ -164,7 +171,7 @@ const Profile: FC<Props> = ({ profile }) => {
       console.log(profile.id);
       console.log('localStorage', localStorage.getItem('accessToken'));
 
-      let createProfileResponse = await axios.post('http://localhost:3001/setProfileMetadata', {
+      let createProfileResponse = await axios.post(`${SERVER_API_ADDRESS}/setProfileMetadata`, {
         profileId: profile.id,
         lensToken: localStorage.getItem('accessToken'),
         metadata: reqObj
@@ -172,7 +179,7 @@ const Profile: FC<Props> = ({ profile }) => {
       let tx = createProfileResponse.data.data.txHash;
       setTx(tx);
       setIsIndexing(true);
-      await axios.get(`http://localhost:3001/hastransactionbeenindexed?txHash=${tx}`);
+      await axios.get(`${SERVER_API_ADDRESS}/hastransactionbeenindexed?txHash=${tx}`);
       setIsIndexing(false);
       setIsUploading(false);
     } else {

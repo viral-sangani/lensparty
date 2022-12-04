@@ -1,5 +1,6 @@
 import NewPost from '@components/Composer/Post/New';
 import CreatePostForm from '@components/CreatePost/CreatePostForm';
+import QueuedPublication from '@components/Publication/QueuedPublication';
 import { GridItemEight, GridItemFour, GridLayout } from '@components/UI/GridLayout';
 import { Modal } from '@components/UI/Modal';
 import MetaTags from '@components/utils/MetaTags';
@@ -18,6 +19,7 @@ import { useCreatePostFormStore } from 'src/store/create-post-form';
 import { useProfileTabStore } from 'src/store/profile-tab';
 import type { ProfileType } from 'src/store/profile-type';
 import { useProfileTypeStore } from 'src/store/profile-type';
+import { useTransactionPersistStore } from 'src/store/transaction';
 
 import AllowanceSettings from './Allowance';
 import Details from './Details';
@@ -37,6 +39,7 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
   const openCommunityModal = useCreatePostFormStore((state) => state.openCommunityModal);
   const setOpenCommunityModal = useCreatePostFormStore((state) => state.setOpenCommunityModal);
   const setProfile = useCreatePostFormStore((state) => state.setProfile);
+  const txnQueue = useTransactionPersistStore((state) => state.txnQueue);
 
   const {
     query: { username, type }
@@ -75,14 +78,27 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
   ) {
     return <Custom404 />;
   }
+
   setProfileType(getProfileType(data?.profile as Profile) as ProfileType);
   const renderTab = () => {
+    console.log('txnQueue', txnQueue);
     switch (currTab) {
       case 'PROFILE':
         return (
           <>
             {getProfileType(data?.profile as Profile) === 'USER' && (
-              <FeedType stats={profile?.stats as any} setFeedType={setFeedType} feedType={feedType} />
+              <>
+                {txnQueue.map(
+                  (txn) =>
+                    txn?.type === 'NEW_POST' && (
+                      <div key={txn.hash}>
+                        {txn.hash}
+                        <QueuedPublication txn={txn} />
+                      </div>
+                    )
+                )}
+                <FeedType stats={profile?.stats as any} setFeedType={setFeedType} feedType={feedType} />
+              </>
             )}
             {(feedType === 'FEED' || feedType === 'REPLIES' || feedType === 'MEDIA') && (
               <>

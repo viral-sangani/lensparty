@@ -116,3 +116,4 @@ export const LS_KEYS = {
 };
 
 export const SERVER_WALLET_ADDRESS = '0x22ae7Cf4cD59773f058B685a7e6B7E0984C54966';
+export const SERVER_API_ADDRESS = 'https://lensparty-production.up.railway.app';

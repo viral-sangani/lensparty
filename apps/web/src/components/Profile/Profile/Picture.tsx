@@ -14,7 +14,7 @@ import splitSignature from '@lib/splitSignature';
 import uploadToIPFS from '@lib/uploadToIPFS';
 import { LensHubProxy } from 'abis';
 import axios from 'axios';
-import { AVATAR, LENSHUB_PROXY, RELAY_ON, SIGN_WALLET } from 'data/constants';
+import { AVATAR, LENSHUB_PROXY, RELAY_ON, SERVER_API_ADDRESS, SIGN_WALLET } from 'data/constants';
 import type { MediaSet, NftImage, Profile, UpdateProfileImageRequest } from 'lens';
 import {
   useCreateSetProfileImageUriTypedDataMutation,
@@ -136,7 +136,7 @@ const Picture: FC<Props> = ({ profile }) => {
     }
 
     if (isCommunity) {
-      const res = await axios.post('http://localhost:3001/createPost', {
+      const res = await axios.post(`${SERVER_API_ADDRESS}/createPost`, {
         profileId: profile.id,
         cover_picture: avatar,
         lensToken: localStorage.getItem('accessToken')

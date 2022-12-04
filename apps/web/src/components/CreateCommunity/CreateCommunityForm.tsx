@@ -15,7 +15,7 @@ import imageProxy from '@lib/imageProxy';
 import onError from '@lib/onError';
 import uploadToIPFS from '@lib/uploadToIPFS';
 import axios from 'axios';
-import { COVER, DEFAULT_COLLECT_TOKEN, SIGN_WALLET } from 'data/constants';
+import { COVER, DEFAULT_COLLECT_TOKEN, SERVER_API_ADDRESS, SIGN_WALLET } from 'data/constants';
 import type { Erc20 } from 'lens';
 import { useEnabledCurrencyModulesWithProfileQuery } from 'lens';
 import { useRouter } from 'next/router';
@@ -90,7 +90,7 @@ function CreateCommunityForm({}: Props) {
         }
         setIsUploading(true);
 
-        let createProfileResponse = await axios.post('http://localhost:3001/createProfile', {
+        let createProfileResponse = await axios.post(`${SERVER_API_ADDRESS}/createprofile`, {
           handle: name,
           profilePictureUri: cover,
           bio,
@@ -111,7 +111,7 @@ function CreateCommunityForm({}: Props) {
         let tx = createProfileResponse.data.data.txHash;
         setTxHash(tx);
         setIsIndexing(true);
-        await axios.get(`http://localhost:3001/hastransactionbeenindexed?txHash=${tx}`);
+        await axios.get(`${SERVER_API_ADDRESS}/hastransactionbeenindexed?txHash=${tx}`);
         setIsIndexing(false);
         setIsUploading(false);
         router.push(`/c/${name}.test`);

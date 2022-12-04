@@ -23,7 +23,13 @@ import onError from '@lib/onError';
 import trimify from '@lib/trimify';
 import uploadToArweave from '@lib/uploadToArweave';
 import axios from 'axios';
-import { ALLOWED_IMAGE_TYPES, ALLOWED_VIDEO_TYPES, APP_NAME, SIGN_WALLET } from 'data/constants';
+import {
+  ALLOWED_IMAGE_TYPES,
+  ALLOWED_VIDEO_TYPES,
+  APP_NAME,
+  SERVER_API_ADDRESS,
+  SIGN_WALLET
+} from 'data/constants';
 import type { Profile } from 'lens';
 import { PublicationMainFocus, ReferenceModules, useCreatePostViaDispatcherMutation } from 'lens';
 import { $getRoot } from 'lexical';
@@ -42,11 +48,7 @@ interface Props {}
 
 const CreatePostForm: FC<Props> = () => {
   const profile = useCreatePostFormStore((state) => state.profile);
-  let forCommunity = false;
-  if (profile != null) {
-    forCommunity = getProfileType(profile as Profile) === 'COMMUNITY';
-  }
-
+  console.log('profile', profile);
   const currentProfile = useAppStore((state) => state.currentProfile);
   const publicationContent = usePublicationStore((state) => state.publicationContent);
   const setPublicationContent = usePublicationStore((state) => state.setPublicationContent);
@@ -59,7 +61,6 @@ const CreatePostForm: FC<Props> = () => {
   const onlyFollowers = useReferenceModuleStore((state) => state.onlyFollowers);
   const degreesOfSeparation = useReferenceModuleStore((state) => state.degreesOfSeparation);
   const [title, setTitle] = useState('');
-  const [txHash, setTxHash] = useState('');
   const setOpenModal = useCreatePostFormStore((state) => state.setOpenModal);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -197,18 +198,24 @@ const CreatePostForm: FC<Props> = () => {
         createdOn: new Date(),
         appId: APP_NAME
       });
-      if (forCommunity) {
-        let createPostResponse = await axios.post('http://localhost:3001/createPost', {
+
+      if (getProfileType(profile as Profile) === 'COMMUNITY') {
+        let createPostResponse = await axios.post(`${SERVER_API_ADDRESS}/createpost`, {
           profileId: profile?.id,
           posterProfileId: currentProfile.id,
           collectModule: payload,
           lensToken: localStorage.getItem('accessToken'),
           contentURI: `https://arweave.net/${id}`
         });
-        let tx = createPostResponse.data.data.txHash;
-        setTxHash(tx);
-        setTxnQueue([generateOptimisticPublication({ txId: tx }), ...txnQueue]);
+        console.log('createPostResponse', createPostResponse);
+        let txHash = createPostResponse.data.data.txHash;
+        let txId = createPostResponse.data.data.txId;
+
+        // set timeout to 2 sec
         onCompleted();
+        setTimeout(() => {
+          setTxnQueue([generateOptimisticPublication({ txHash, txId }), ...txnQueue]);
+        }, 2000);
       } else {
         const request = {
           profileId: currentProfile?.id,
@@ -264,7 +271,7 @@ const CreatePostForm: FC<Props> = () => {
           <UploadImageAttachment attachments={attachments} setAttachments={setAttachments} />
           <UploadVideoAttachment attachments={attachments} setAttachments={setAttachments} />
           <Giphy setGifAttachment={(gif: IGif) => setGifAttachment(gif)} />
-          <CollectSettings forCommunity={forCommunity} />
+          <CollectSettings forCommunity={getProfileType(profile as Profile) === 'COMMUNITY'} />
         </div>
         <div className="ml-auto pt-2 sm:pt-0">
           <Button
