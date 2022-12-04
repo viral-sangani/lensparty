@@ -88,15 +88,6 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
           <>
             {getProfileType(data?.profile as Profile) === 'USER' && (
               <>
-                {txnQueue.map(
-                  (txn) =>
-                    txn?.type === 'NEW_POST' && (
-                      <div key={txn.hash}>
-                        {txn.hash}
-                        <QueuedPublication txn={txn} />
-                      </div>
-                    )
-                )}
                 <FeedType stats={profile?.stats as any} setFeedType={setFeedType} feedType={feedType} />
               </>
             )}
@@ -115,6 +106,17 @@ const ViewProfile: NextPage<Props> = ({ isCommunity = false }) => {
                     </Modal>
                   </>
                 )}
+                {txnQueue.map((txn) => {
+                  console.log('txn?.hash', txn?.hash);
+                  return (
+                    txn?.type === 'NEW_POST' && (
+                      <div key={txn.hash}>
+                        {txn.hash}
+                        <QueuedPublication txn={txn} />
+                      </div>
+                    )
+                  );
+                })}
                 <Feed
                   profile={profile as any}
                   type={getProfileType(data?.profile as Profile) === 'COMMUNITY' ? 'FEED' : feedType}

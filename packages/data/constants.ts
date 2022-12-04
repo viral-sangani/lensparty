@@ -115,5 +115,5 @@ export const LS_KEYS = {
   MESSAGE_STORE: 'message.store'
 };
 
-export const SERVER_WALLET_ADDRESS = '0x22ae7Cf4cD59773f058B685a7e6B7E0984C54966';
+export const SERVER_WALLET_ADDRESS = '0xe64f26EB5af90BE14c0000e825aEd84D6D2ee493';
 export const SERVER_API_ADDRESS = 'https://lensparty-production.up.railway.app';
