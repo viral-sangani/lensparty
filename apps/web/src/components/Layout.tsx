@@ -46,7 +46,9 @@ const Layout: FC<Props> = ({ children }) => {
   };
 
   useEffect(() => {
-    if (theme && theme === 'light') setTheme('dark');
+    if (theme && theme === 'light') {
+      setTheme('dark');
+    }
   }, []);
 
   // Fetch current profiles and sig nonce owned by the wallet address
