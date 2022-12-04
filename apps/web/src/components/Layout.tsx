@@ -25,7 +25,7 @@ interface Props {
 }
 
 const Layout: FC<Props> = ({ children }) => {
-  const { resolvedTheme } = useTheme();
+  const { resolvedTheme, setTheme, theme } = useTheme();
   const setProfiles = useAppStore((state) => state.setProfiles);
   const setUserSigNonce = useAppStore((state) => state.setUserSigNonce);
   const currentProfile = useAppStore((state) => state.currentProfile);
@@ -44,6 +44,10 @@ const Layout: FC<Props> = ({ children }) => {
     setProfileId(null);
     setCurrentProfile(null);
   };
+
+  useEffect(() => {
+    if (theme && theme === 'light') setTheme('dark');
+  }, []);
 
   // Fetch current profiles and sig nonce owned by the wallet address
   const { loading } = useUserProfilesQuery({
